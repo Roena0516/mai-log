@@ -15,8 +15,34 @@ export type SongData = {
   songName: string;
   achievement: string;
   ratingScore: number;
-  clearMark: "SSS+" | "SSS" | "SS+" | "SS" | "S+" | "S" | "AAA" | "BBB" | "CCC" | "D";
-  flags?: ("FC" | "FC+" | "AP" | "AP+" | "FS" | "FS+" | "FSD" | "FSD+" | "SYNC")[];
+  clearMark:
+    | "SSS+"
+    | "SSS"
+    | "SS+"
+    | "SS"
+    | "S+"
+    | "S"
+    | "AAA"
+    | "AA"
+    | "A"
+    | "BBB"
+    | "BB"
+    | "B"
+    | "CCC"
+    | "CC"
+    | "C"
+    | "D";
+  flags?: (
+    | "FC"
+    | "FC+"
+    | "AP"
+    | "AP+"
+    | "FS"
+    | "FS+"
+    | "FSD"
+    | "FSD+"
+    | "SYNC"
+  )[];
   constant: string;
   bgColor?: string;
   type?: "DX" | "ST";
