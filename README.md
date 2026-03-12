@@ -1,6 +1,6 @@
-# CLAUDE.MD - mai-log 프로젝트 가이드
+mai-log 프로젝트
 
-> Claude Code를 사용하여 mai-log 프로젝트를 개발하기 위한 가이드 문서입니다.
+Claude의 좋은 이해를 위한 좋은 Claude가 작성한 CLAUDE.md를 복사해온 좋은 리드리드미
 
 ## 프로젝트 개요
 
