@@ -1,6 +1,6 @@
-mai-log 프로젝트
+# mai-log 프로젝트
 
-Claude의 좋은 이해를 위한 좋은 Claude가 작성한 CLAUDE.md를 복사해온 좋은 리드리드미
+> Claude의 좋은 이해를 위한 좋은 Claude가 작성한 CLAUDE.md를 복사해온 좋은 리드리드미
 
 ## 프로젝트 개요
 
