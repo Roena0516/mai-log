@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { profileData } from "../data/mockData";
 
 export default function ProfileCard() {
   return (
@@ -20,7 +21,7 @@ export default function ProfileCard() {
           {/* Title */}
           <div className="bg-[#f9b993] border-[3px] border-[#e1946d] border-solid flex h-[40px] items-center justify-center overflow-hidden p-[7.5px] rounded-lg shadow-[0px_3px_0px_0px_rgba(0,0,0,0.6)] w-full">
             <div className="flex flex-col justify-center leading-none text-[18px] text-white whitespace-nowrap font-regular [text-shadow:2px_0_0_#2b2b2b,-2px_0_0_#2b2b2b,0_2px_0_#2b2b2b,0_-2px_0_#2b2b2b,2px_2px_0_#2b2b2b,-2px_-2px_0_#2b2b2b,2px_-2px_0_#2b2b2b,-2px_2px_0_#2b2b2b]">
-              <p className="leading-normal">FULL SYNCｷﾎﾞﾝﾇ</p>
+              <p className="leading-normal">{profileData.title}</p>
             </div>
           </div>
 
@@ -29,7 +30,7 @@ export default function ProfileCard() {
             {/* Name */}
             <div className="bg-white border-[#dbdbdb] border-[3.75px] border-solid flex flex-1 h-14 items-center overflow-hidden p-2 rounded-lg shadow-[0px_3px_0px_0px_rgba(0,0,0,0.6)]">
               <div className="flex flex-col justify-center leading-none text-[30px] text-[#2b2b2b] whitespace-nowrap font-regular">
-                <p className="leading-normal">ＲＯＥＮＡ・∀・</p>
+                <p className="leading-normal">{profileData.nickname}</p>
               </div>
             </div>
 
@@ -45,31 +46,16 @@ export default function ProfileCard() {
               >
                 <div className="bg-gradient-to-b flex flex-1 from-[#5d5d5d] h-full items-center justify-between overflow-hidden relative rounded-[7.5px] to-[#6b6b6b]">
                   <div className="absolute bg-[#828282] h-[15px] left-0 top-[33.75px] w-[142.5px]" />
-                  <div className="border-[#4f4a4a] border border-solid flex flex-1 flex-col h-full items-center justify-center overflow-hidden relative">
-                    <div className="flex flex-col justify-center leading-none text-[#ffe788] text-[32px] text-center w-full font-semibold">
-                      <p className="leading-normal">1</p>
+                  {profileData.rating.map((digit, index) => (
+                    <div
+                      key={index}
+                      className="border-[#4f4a4a] border border-solid flex flex-1 flex-col h-full items-center justify-center overflow-hidden relative"
+                    >
+                      <div className="flex flex-col justify-center leading-none text-[#ffe788] text-[32px] text-center w-full font-semibold">
+                        <p className="leading-normal">{digit}</p>
+                      </div>
                     </div>
-                  </div>
-                  <div className="border-[#4f4a4a] border border-solid flex flex-1 flex-col h-full items-center justify-center overflow-hidden relative">
-                    <div className="flex flex-col justify-center leading-none text-[#ffe788] text-[32px] text-center w-full font-semibold">
-                      <p className="leading-normal">5</p>
-                    </div>
-                  </div>
-                  <div className="border-[#4f4a4a] border border-solid flex flex-1 flex-col h-full items-center justify-center overflow-hidden relative">
-                    <div className="flex flex-col justify-center leading-none text-[#ffe788] text-[32px] text-center w-full font-semibold">
-                      <p className="leading-normal">9</p>
-                    </div>
-                  </div>
-                  <div className="border-[#4f4a4a] border border-solid flex flex-1 flex-col h-full items-center justify-center overflow-hidden relative">
-                    <div className="flex flex-col justify-center leading-none text-[#ffe788] text-[32px] text-center w-full font-semibold">
-                      <p className="leading-normal">7</p>
-                    </div>
-                  </div>
-                  <div className="border-[#4f4a4a] border border-solid flex flex-1 flex-col h-full items-center justify-center overflow-hidden relative">
-                    <div className="flex flex-col justify-center leading-none text-[#ffe788] text-[32px] text-center w-full font-semibold">
-                      <p className="leading-normal">5</p>
-                    </div>
-                  </div>
+                  ))}
                 </div>
               </div>
 
@@ -156,7 +142,7 @@ export default function ProfileCard() {
                 />
               </div>
               <div className="flex flex-col justify-center leading-none text-[30px] text-[#2b2b2b] whitespace-nowrap font-regular">
-                <p className="leading-normal">× 309</p>
+                <p className="leading-normal">× {profileData.starCount}</p>
               </div>
             </div>
           </div>
@@ -164,10 +150,12 @@ export default function ProfileCard() {
           {/* Play Count */}
           <div className="flex gap-2 items-center leading-none w-full">
             <div className="flex flex-col justify-center text-[24px] text-[#2b2b2b] whitespace-nowrap font-regular">
-              <p className="leading-normal">PLAY COUNT : 1,726</p>
+              <p className="leading-normal">
+                PLAY COUNT : {profileData.playCount.toLocaleString()}
+              </p>
             </div>
             <div className="flex flex-col h-full justify-center text-[#898989] text-[20px] w-[49px] font-regular">
-              <p className="leading-normal">/ 153</p>
+              <p className="leading-normal">/ {profileData.currentPlayCount}</p>
             </div>
           </div>
         </div>
