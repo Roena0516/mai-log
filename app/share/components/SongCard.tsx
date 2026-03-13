@@ -8,8 +8,14 @@ type ClearMarkType =
   | "S+"
   | "S"
   | "AAA"
+  | "AA"
+  | "A"
   | "BBB"
+  | "BB"
+  | "B"
   | "CCC"
+  | "CC"
+  | "C"
   | "D";
 type FlagType =
   | "FC"
@@ -68,11 +74,11 @@ function getRankStyle(rank: ClearMarkType) {
     return { fill: "#FAE479", stroke: "#524360", strokeWidth: "10px" };
   if (rank === "S+" || rank === "S")
     return { fill: "#FFF4BF", stroke: "#524360", strokeWidth: "10px" };
-  if (rank === "AAA")
+  if (rank === "AAA" || rank === "AA" || rank === "A")
     return { fill: "#FB9F9F", stroke: "#524360", strokeWidth: "10px" };
-  if (rank === "BBB")
+  if (rank === "BBB" || rank === "BB" || rank === "B")
     return { fill: "#A1D8FF", stroke: "#524360", strokeWidth: "10px" };
-  if (rank === "CCC")
+  if (rank === "CCC" || rank === "CC" || rank === "C")
     return { fill: "#D8A1FF", stroke: "#524360", strokeWidth: "10px" };
   if (rank === "D")
     return { fill: "#FFFFFF", stroke: "#524360", strokeWidth: "10px" };

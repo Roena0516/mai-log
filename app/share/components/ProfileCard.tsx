@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { profileData } from "../data/mockData";
+import { profileData } from "../../home/data/mockData";
 
 export default function ProfileCard() {
   return (
