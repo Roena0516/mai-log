@@ -1,11 +1,67 @@
+// 단위 타입
+export type DanType =
+  | "First"
+  | "Two"
+  | "Three"
+  | "Four"
+  | "Five"
+  | "Six"
+  | "Seven"
+  | "Eight"
+  | "Nine"
+  | "Ten"
+  | "JinFirst"
+  | "JinTwo"
+  | "JinThree"
+  | "JinFour"
+  | "JinFive"
+  | "JinSix"
+  | "JinSeven"
+  | "JinEight"
+  | "JinNine"
+  | "JinTen"
+  | "JinKaiden"
+  | "UraKaiden";
+
+// 오토모다치 타입
+export type OtomoType =
+  | "B1"
+  | "B2"
+  | "B3"
+  | "B4"
+  | "B5"
+  | "A1"
+  | "A2"
+  | "A3"
+  | "A4"
+  | "A5"
+  | "S1"
+  | "S2"
+  | "S3"
+  | "S4"
+  | "S5"
+  | "SS1"
+  | "SS2"
+  | "SS3"
+  | "SS4"
+  | "SS5"
+  | "SSS1"
+  | "SSS2"
+  | "SSS3"
+  | "SSS4"
+  | "SSS5"
+  | "LEGEND";
+
 // 프로필 데이터
 export const profileData = {
   title: "FULL SYNCｷﾎﾞﾝﾇ",
   nickname: "ＲＯＥＮＡ・∀・",
-  rating: [1, 5, 9, 7, 5], // 각 자리수
+  rating: [1, 7, 0, 2, 7], // 각 자리수
   starCount: 309,
-  playCount: 1726,
-  currentPlayCount: 153,
+  playCount: 1748,
+  currentPlayCount: 175,
+  dan: "UraKaiden" as DanType, // 真初段
+  otomo: "LEGEND" as OtomoType, // SS5
 };
 
 // 곡 데이터 타입

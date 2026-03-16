@@ -1,7 +1,19 @@
 import Image from "next/image";
 import { profileData } from "../../home/data/mockData";
+import {
+  getRatingBackgroundImage,
+  getRatingStarCount,
+} from "../../home/utils/ratingUtils";
 
 export default function ProfileCard() {
+  // 레이팅 배열을 숫자로 변환 (예: [1, 5, 9, 7, 5] -> 15975)
+  const ratingValue = parseInt(profileData.rating.join(""));
+  const starCount = getRatingStarCount(ratingValue);
+  const ratingBgImage = getRatingBackgroundImage(ratingValue);
+
+  // Dan 및 Otomo 이미지 경로
+  const danImage = `/share/assets/dans/Dan=${profileData.dan}.png`;
+  const otomoImage = `/share/assets/otomos/Otomodachi=${profileData.otomo}.png`;
   return (
     <div className="bg-[#cee8fb] border-[3px] border-[#2b2b2b] border-solid flex gap-9 items-center justify-center overflow-hidden p-9 rounded-lg shadow-[4px_8px_0px_0px_rgba(0,0,0,0.4)]">
       {/* UserProfile - Left Card */}
@@ -37,14 +49,15 @@ export default function ProfileCard() {
             {/* Rating Section */}
             <div className="flex gap-1 items-center">
               {/* Rating */}
-              <div
-                className="flex h-14 items-start p-1 rounded-lg w-[150px]"
-                style={{
-                  backgroundImage:
-                    "linear-gradient(99.2704deg, rgb(182, 218, 255) 1.6753%, rgb(244, 255, 120) 29.583%, rgb(255, 192, 192) 53.769%, rgb(192, 255, 137) 76.56%)",
-                }}
-              >
-                <div className="bg-gradient-to-b flex flex-1 from-[#5d5d5d] h-full items-center justify-between overflow-hidden relative rounded-[7.5px] to-[#6b6b6b]">
+              <div className="flex h-14 items-start p-1 rounded-lg w-[150px] relative">
+                {/* 배경 이미지 */}
+                <Image
+                  src={ratingBgImage}
+                  alt="Rating Background"
+                  fill
+                  className="object-cover rounded-lg"
+                />
+                <div className="bg-gradient-to-b flex flex-1 from-[#5d5d5d] h-full items-center justify-between overflow-hidden relative rounded-[7.5px] to-[#6b6b6b] z-10">
                   <div className="absolute bg-[#828282] h-[15px] left-0 top-[33.75px] w-[142.5px]" />
                   {profileData.rating.map((digit, index) => (
                     <div
@@ -59,41 +72,21 @@ export default function ProfileCard() {
                 </div>
               </div>
 
-              {/* Stars - 2x2 Grid */}
-              <div className="grid grid-cols-2 grid-rows-2 gap-0.5 shrink-0 w-12 h-12">
-                <div className="relative w-full h-full">
-                  <Image
-                    src="/share/assets/RatingStar.png"
-                    alt="Star"
-                    fill
-                    className="object-contain"
-                  />
+              {/* Stars - 동적 개수 */}
+              {starCount > 0 && (
+                <div className="grid grid-cols-2 grid-rows-2 gap-0.5 shrink-0 w-12 h-12">
+                  {Array.from({ length: starCount }).map((_, index) => (
+                    <div key={index} className="relative w-full h-full">
+                      <Image
+                        src="/share/assets/ratings/RatingStar.png"
+                        alt="Star"
+                        fill
+                        className="object-contain"
+                      />
+                    </div>
+                  ))}
                 </div>
-                <div className="relative w-full h-full">
-                  <Image
-                    src="/share/assets/RatingStar.png"
-                    alt="Star"
-                    fill
-                    className="object-contain"
-                  />
-                </div>
-                <div className="relative w-full h-full">
-                  <Image
-                    src="/share/assets/RatingStar.png"
-                    alt="Star"
-                    fill
-                    className="object-contain"
-                  />
-                </div>
-                <div className="relative w-full h-full">
-                  <Image
-                    src="/share/assets/RatingStar.png"
-                    alt="Star"
-                    fill
-                    className="object-contain"
-                  />
-                </div>
-              </div>
+              )}
             </div>
           </div>
 
@@ -102,33 +95,21 @@ export default function ProfileCard() {
             {/* Dan */}
             <div className="h-16 relative w-[170px]">
               <Image
-                src="/share/assets/Dan.png"
-                alt="Dan"
+                src={danImage}
+                alt={`Dan ${profileData.dan}`}
                 fill
                 className="object-contain"
               />
-              {/* <div
-                className="absolute flex flex-col justify-center leading-none left-[calc(50%-54px)] text-[#eedbff] text-[36px] top-1/2 -translate-y-1/2 whitespace-nowrap font-extrabold"
-                style={{ textShadow: "0px 3px 0px rgba(0, 0, 0, 0.6)" }}
-              >
-                <p className="leading-normal">真初段</p>
-              </div> */}
             </div>
 
             {/* Otomo */}
             <div className="h-16 relative w-[133px]">
               <Image
-                src="/share/assets/Otomo.png"
-                alt="Otomo"
+                src={otomoImage}
+                alt={`Otomo ${profileData.otomo}`}
                 fill
                 className="object-contain"
               />
-              {/* <div
-                className="absolute flex flex-col justify-center leading-none left-[calc(50%-34.5px)] text-[#bddfff] text-[36px] top-1/2 -translate-y-1/2 whitespace-nowrap font-extrabold"
-                style={{ textShadow: "0px 3px 0px rgba(0, 0, 0, 0.6)" }}
-              >
-                <p className="leading-normal">SS5</p>
-              </div> */}
             </div>
 
             {/* Star */}
