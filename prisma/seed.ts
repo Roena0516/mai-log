@@ -35,8 +35,8 @@ const VERSION_MAP: Record<number, string> = {
   26500: "CiRCLE PLUS",
 };
 
-// 현행 버전 + 이전 버전 = 신곡 기준
-const NEW_VERSION_THRESHOLD = 25000;
+// 신곡 기준: PRiSM PLUS(25500) + CiRCLE(26000) + CiRCLE PLUS(26500)
+const NEW_VERSION_THRESHOLD = 25500;
 
 const DIFF_KEYS = ["bas", "adv", "exp", "mas", "remas"] as const;
 const DIFF_TYPE_MAP: Record<string, string> = {

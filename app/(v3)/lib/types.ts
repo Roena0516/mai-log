@@ -12,4 +12,14 @@ export interface Song {
   ach: number;
   marks: MarkType[];
   lv: number;
+  isDx?: boolean;
+  isNewVersion?: boolean;
+}
+
+export interface RecentLogEntry {
+  name: string;
+  ach: number;
+  lv: number;
+  isDx: boolean;
+  diff: string;
 }
