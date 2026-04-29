@@ -1,351 +1,176 @@
-# CLAUDE.MD - mai-log 프로젝트 가이드
-
-> Claude Code를 사용하여 mai-log 프로젝트를 개발하기 위한 가이드 문서입니다.
+# mai-log — CLAUDE.md
 
 ## 프로젝트 개요
 
-**mai-log**는 maimaiDX International ver. 사설 전적 관리 서비스입니다.
-
-### 프로젝트 목적
-
-- 공식 maimaiDX net 사이트의 불편한 UI/UX 개선
-- 더 합리적인 레이팅 시스템 제공
-- 플레이 기록 조회 및 악곡 리스트 관리 기능 제공
-
-### 영감
-
-이 프로젝트는 [maishift](https://maimai.shiftpsh.com/)에서 영감을 받았으며, shiftpsh님께 존경과 감사를 표합니다.
-
----
+maimai DX 플레이 데이터를 아르케아(Arcaea), SOUND VOLTEX, 츄니즘(CHUNITHM) 등
+타 리듬게임의 지표로 환산해, 타 게임에서 유입된 유저가 자신의 실력대를
+친숙한 언어로 즉시 파악할 수 있게 해주는 크로스게임 레이팅 환산 서비스.
 
 ## 기술 스택
 
-### 프론트엔드
-
-- **Next.js 16.1.6** - React 프레임워크 (App Router)
-- **React 19.2.3** - UI 라이브러리
-- **TypeScript 5.x** - 정적 타입 체크
-- **Tailwind CSS 4.x** - 유틸리티 기반 CSS 프레임워크
-
-### 데이터베이스 (예정)
-
-- **PostgreSQL** - 관계형 데이터베이스
-- **Prisma ORM** - TypeScript ORM
-
-### 백엔드
-
-**백엔드는 별도로 구성하지 않습니다.**
-
-- 플레이 기록 조회 및 악곡 리스트 저장은 프론트엔드에서 처리
-- 레이팅 산출은 클라이언트 사이드에서 계산
-
----
+- **Frontend**: TypeScript, Next.js (App Router), Zustand, Tailwind CSS
+- **Database**: Neon (Serverless PostgreSQL), Prisma ORM
+- **Deployment**: Cloudflare Pages
 
 ## 프로젝트 구조
 
 ```
-mailog/
-├── app/                    # Next.js App Router
-│   ├── layout.tsx         # 루트 레이아웃
-│   ├── page.tsx           # 메인 페이지
-│   ├── globals.css        # 전역 스타일
-│   └── favicon.ico        # 파비콘
-├── md/                     # 프로젝트 문서
-│   └── mai-log *.md       # 프로젝트 기획서
-├── node_modules/           # 의존성 패키지
-├── public/                 # 정적 파일
-├── package.json            # 프로젝트 의존성
-├── tsconfig.json          # TypeScript 설정
-├── next.config.ts         # Next.js 설정
-├── tailwind.config.ts     # Tailwind CSS 설정 (예정)
-├── eslint.config.mjs      # ESLint 설정
-└── README.md              # 프로젝트 README
+mai-log/
+├── app/                        # Next.js App Router
+│   ├── api/                    # API Routes
+│   │   └── records/
+│   │       └── route.ts        # 북마클릿 → 서버 데이터 수신 엔드포인트
+│   ├── [username]/             # 유저 프로필 페이지
+│   └── page.tsx                # 메인 페이지
+├── components/                 # 공통 컴포넌트
+├── lib/
+│   ├── prisma.ts               # Prisma 클라이언트 싱글톤
+│   ├── rating.ts               # maimai 레이팅 계산 로직
+│   └── convert/                # 타 게임 지표 환산 로직
+│       ├── arcaea.ts           # 포텐셜 환산
+│       ├── sdvx.ts             # 볼포스 환산
+│       └── chunithm.ts         # 츄니즘 레이팅 환산
+├── store/                      # Zustand 전역 상태
+├── prisma/
+│   └── schema.prisma
+└── CLAUDE.md
 ```
 
----
-
-## 핵심 개념
-
-### 1. maimaiDX 레이팅 시스템
-
-maimaiDX는 플레이어의 실력을 '레이팅'이라는 수치로 표현합니다.
-
-#### 기존 레이팅 산출 공식
+## 데이터 흐름
 
 ```
-점수 = (난이도 × 달성률 × 랭크별 계수 / 100) + All Perfect 보너스(1점)
+유저가 북마클릿 실행
+    → maimai DX NET에서 플레이 데이터 스크래핑
+    → POST /api/records 로 전송
+    → Neon DB에 저장 (Prisma)
+    → 프로필 페이지에서 환산 결과 표시
 ```
 
-- **달성률**: 최대 100.5% (게임에서 101%를 얻어도 100.5로 계산)
-- **난이도**: 1.0 ~ 15.0 실수값
-- **랭크**: D ~ SSS+ (달성률에 따라 결정)
-- **레이팅**: 상위 50곡의 점수 합산 (신곡 15곡 + 나머지 35곡)
-
-#### 랭크별 계수
-
-| 랭크 | 계수 |
-| ---- | ---- |
-| SSS+ | 22.4 |
-| SSS  | 21.6 |
-| SS+  | 20.8 |
-| SS   | 20.0 |
-| ...  | ...  |
-
-### 2. mai-log 개선 레이팅 시스템
-
-#### 개선된 점수 산출 공식
-
-```
-점수 = 난이도 × 달성률 × 랭크별 계수 × 클리어 마크 계수 / 100
-```
-
-#### 클리어 마크 계수
-
-| 클리어 마크  | 계수  |
-| ------------ | ----- |
-| Full Combo   | 1.005 |
-| Full Combo+  | 1.01  |
-| All Perfect  | 1.025 |
-| All Perfect+ | 1.05  |
-
-#### 개선 사항
-
-1. **Full Combo/All Perfect의 가치 상승**: 기존 1점 → 최대 15점 추가
-2. **신곡/구곡 구분 제거**: 50곡 통합 (기존: 신곡 15 + 구곡 35)
-3. **클리어 마크 반영**: FC/AP가 레이팅에 실질적 영향
-
-#### 예시 (14.0 레벨, SSS+ 달성)
-
-- 기존: 315점
-- Full Combo: 316점 (+1)
-- Full Combo+: 318점 (+3)
-- All Perfect: 323점 (+8)
-- All Perfect+: 330점 (+15)
-
----
-
-## 주요 기능
-
-### 1. 개선된 레이팅 시스템
-
-- Full Combo/All Perfect에 더 큰 가치 부여
-- 신곡/구곡 통합 레이팅 (50곡)
-
-### 2. 플레이 기록 조회
-
-- 간편한 기록 조회 인터페이스
-- 다양한 필터링 옵션
-- 난이도별, 랭크별, 달성률별 정렬
-
-### 3. 악곡 리스트 관리
-
-- 플레이하고 싶은 곡 리스트 저장
-- 추천 곡 리스트 생성
-- 리스트 이름 및 설명 작성
-- 공개 범위 설정 (비공개/공개)
-
-### 4. 데이터 업로드
-
-- **북마클릿(Bookmarklet) 방식 채택**
-- maimaiDX net 사이트에서 북마크를 통해 데이터 수집
-- DOM 구조 파싱 후 mai-log로 전송
-
-> **참고**: maimaiDX는 공식 API를 제공하지 않아 북마클릿 방식 사용
-
-### 5. 페이지 공유
-
-- 플레이 기록 링크 공유
-- 갤러리에서 다른 유저 기록 검색
-- 인기 악곡 리스트 탐색
-
----
-
-## 개발 가이드
-
-### 환경 설정
-
-```bash
-# 개발 서버 실행
-npm run dev
-
-# 프로덕션 빌드
-npm run build
-
-# 프로덕션 서버 실행
-npm start
-
-# ESLint 실행
-npm run lint
-```
-
-### 개발 서버
-
-- URL: http://localhost:3000
-- Hot Reload 지원
-
-### 코딩 컨벤션
-
-#### TypeScript
-
-- **엄격한 타입 체크** 활성화
-- `any` 타입 사용 최소화
-- 인터페이스 우선 사용
-
-#### 컴포넌트
-
-- 함수형 컴포넌트 사용
-- React Server Components 우선 고려
-- 클라이언트 컴포넌트는 'use client' 명시
-
-#### 스타일링
-
-- Tailwind CSS 유틸리티 클래스 사용
-- 커스텀 CSS는 최소화
-- 반응형 디자인 필수
-
----
-
-## 개발 시 주의사항
-
-### 1. 레이팅 계산 정확성
-
-- 소수점 계산 정밀도 유지
-- 랭크별 계수 정확히 적용
-- 클리어 마크 계수 누락 방지
-
-### 2. 데이터 수집
-
-- maimaiDX net의 DOM 구조 변경 대응
-- 북마클릿 코드의 안정성 확보
-- 에러 핸들링 강화
-
-### 3. 성능 최적화
-
-- Next.js Image 컴포넌트 활용
-- 클라이언트/서버 컴포넌트 적절히 분리
-- 대용량 리스트 렌더링 최적화 (가상화 고려)
-
-### 4. 사용자 경험
-
-- maishift의 심플하고 접근성 좋은 UI/UX 참고
-- 필터링 기능 직관적으로 구현
-- 로딩 상태 명확히 표시
-
-### 5. 보안
-
-- 사용자 데이터 안전하게 저장
-- XSS 공격 방지 (북마클릿 코드 검증)
-- 공개 범위 설정 철저히 준수
-
----
-
-## 데이터베이스 스키마 (예정)
-
-### Users (유저)
-
-- id
-- username
-- email
-- created_at
-
-### PlayRecords (플레이 기록)
-
-- id
-- user_id
-- song_id
-- difficulty
-- score
-- achievement_rate
-- rank
-- clear_mark (FC/FC+/AP/AP+)
-- rating_score (계산된 레이팅 점수)
-- played_at
-
-### Songs (악곡)
-
-- id
-- title
-- artist
-- difficulty_levels (Easy/Basic/Advanced/Expert/Master/Re:Master)
-- is_new (신곡 여부)
-
-### SongLists (악곡 리스트)
-
-- id
-- user_id
-- name
-- description
-- is_public
-- created_at
-
-### SongListItems (리스트 항목)
-
-- id
-- list_id
-- song_id
-- order
-
----
-
-## 참고 자료
-
-### maimaiDX 관련
-
-- [maimaiDX 공식 사이트](https://maimai.sega.jp/)
-- [maimaiDX net](https://maimaidx-eng.com/)
-
-### 유사 서비스
-
-- [maishift](https://maimai.shiftpsh.com/) - 영감을 받은 서비스
-
-### 기술 문서
-
-- [Next.js 공식 문서](https://nextjs.org/docs)
-- [Tailwind CSS 공식 문서](https://tailwindcss.com/docs)
-- [Prisma 공식 문서](https://www.prisma.io/docs)
-
----
-
-## Claude Code 작업 시 팁
-
-### 레이팅 계산 로직 구현 시
-
-```typescript
-// 개선된 레이팅 산출 함수 예시
-function calculateRating(
-  difficulty: number,
-  achievementRate: number,
-  rank: string,
-  clearMark?: "FC" | "FC+" | "AP" | "AP+",
-): number {
-  const rankCoefficient = getRankCoefficient(rank);
-  const clearMarkCoefficient = getClearMarkCoefficient(clearMark);
-  const cappedAchievement = Math.min(achievementRate, 100.5);
-
-  return (
-    (difficulty * cappedAchievement * rankCoefficient * clearMarkCoefficient) /
-    100
-  );
+## 데이터베이스 스키마 (Prisma)
+
+```prisma
+model User {
+  id               String   @id @default(cuid())
+  nickname         String   @unique
+  title            String?
+  playCountTotal   Int      @default(0)
+  playCountVersion Int      @default(0)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  records          Record[]
+}
+
+model Record {
+  id             String   @id @default(cuid())
+  userId         String
+  user           User     @relation(fields: [userId], references: [id])
+  title          String
+  achievement    Float
+  level          Float
+  difficultyType String   // basic | advanced | expert | master | remaster
+  isDx           Boolean
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 }
 ```
 
-### 북마클릿 구현 가이드
+## 핵심 비즈니스 로직
 
-- maimaiDX net의 DOM을 안전하게 파싱
-- 수집한 데이터를 JSON으로 변환
-- postMessage API로 mai-log 사이트에 전송
+### maimai 레이팅 계산
 
-### UI 컴포넌트 개발
+```typescript
+// 달성률 구간별 계수
+function getCoefficient(achievement: number): number {
+  if (achievement >= 100.5) return 22.4;
+  if (achievement >= 100.0) return 21.6;
+  if (achievement >= 99.5) return 21.1;
+  if (achievement >= 99.0) return 20.8;
+  if (achievement >= 97.0) return 20.0;
+  if (achievement >= 94.0) return 16.8;
+  if (achievement >= 90.0) return 15.2;
+  if (achievement >= 80.0) return 13.6;
+  if (achievement >= 75.0) return 12.0;
+  if (achievement >= 70.0) return 11.2;
+  return 0;
+}
 
-- 필터링 가능한 곡 리스트
-- 레이팅 상세 정보 카드
-- 악곡 리스트 관리 인터페이스
-- 갤러리/검색 페이지
+// 단일 채보 레이팅
+function calcSingleRating(level: number, achievement: number): number {
+  return Math.floor(
+    ((level * Math.min(achievement, 100.5)) / 100) *
+      getCoefficient(achievement),
+  );
+}
 
----
+// 전체 레이팅 = 베스트 50곡 평균
+```
 
-## 문의 및 기여
+### 타 게임 환산 기준 (초안)
 
-프로젝트에 대한 문의사항이나 기여하고 싶은 내용이 있다면 이슈를 생성해주세요.
+| maimai 레이팅 | Arcaea 포텐셜 | SDVX 볼포스 | CHUNITHM 레이팅 |
+| :-----------: | :-----------: | :---------: | :-------------: |
+|    ~5,000     |     ~5.00     |   ~8,000    |      ~5.00      |
+|    ~10,000    |     ~8.00     |   ~10,000   |      ~8.00      |
+|    ~12,000    |    ~10.00     |   ~12,000   |     ~10.00      |
+|    ~14,000    |    ~11.00     |   ~14,000   |     ~12.00      |
+|    ~15,000    |    ~12.00     |   ~16,000   |     ~14.00      |
+|    ~16,000    |    ~13.00+    |  ~18,000+   |     ~16.00      |
 
-**mai-log 프로젝트에 관심을 가져주셔서 감사합니다!**
+> 환산 기준은 각 게임의 레이팅 산출 구조와 유저 분포를 기반으로 지속적으로 보정.
+
+## API 명세
+
+### POST /api/records
+
+북마클릿에서 수집한 데이터를 수신해 DB에 저장.
+
+**Request Body**
+
+```json
+{
+  "userProfile": {
+    "nickname": "string",
+    "title": "string",
+    "playCountTotal": 0,
+    "playCountVersion": 0
+  },
+  "records": [
+    {
+      "title": "string",
+      "achievement": 99.5,
+      "level": 13.9,
+      "difficulty_type": "master",
+      "is_dx": true
+    }
+  ]
+}
+```
+
+**Response**
+
+```json
+{ "ok": true, "saved": 1022 }
+```
+
+## 코드 컨벤션
+
+- 컴포넌트: PascalCase, 파일명도 동일
+- 유틸 함수: camelCase
+- 환산 로직은 `/lib/convert/` 에만 작성, 컴포넌트에 직접 작성 금지
+- Prisma 클라이언트는 `/lib/prisma.ts` 싱글톤만 사용
+- API Route는 반드시 try-catch로 감싸고 적절한 HTTP 상태코드 반환
+- 타입은 `any` 사용 금지, 모든 데이터에 명시적 타입 정의
+
+## 환경 변수
+
+```env
+DATABASE_URL=           # Neon PostgreSQL 연결 문자열
+DIRECT_URL=             # Prisma migrate용 direct 연결 (Neon 필수)
+```
+
+## 주의사항
+
+- 북마클릿은 maimai DX NET 영문판(`maimaidx-eng.com`) 기준으로 동작
+- 환산 수치는 추정값이며, 각 게임의 공식 레이팅과 정확히 일치하지 않을 수 있음
+- 유저 데이터는 플레이 카운트가 이전보다 증가한 경우에만 갱신
+- Neon + Prisma 연결 시 `DATABASE_URL`과 `DIRECT_URL` 모두 설정 필요

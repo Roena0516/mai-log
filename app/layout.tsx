@@ -14,9 +14,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko">
-      <body
-        className={`${pretendard.className} bg-[#9bd5fc] min-h-screen flex items-center`}
-      >
+      <body className={pretendard.className}>
         {children}
       </body>
     </html>

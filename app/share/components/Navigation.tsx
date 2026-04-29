@@ -11,9 +11,9 @@ export default function Navigation() {
       <div className="bg-[#ff9fa7] flex flex-1 gap-1 items-center overflow-hidden p-1 w-full">
         {/* 레이팅 */}
         <Link
-          href="/home/rating"
+          href="/old/rating"
           className={`flex flex-1 h-full items-center justify-center overflow-hidden rounded-lg ${
-            pathname === "/home/rating" ? "bg-[#f4868f]" : ""
+            pathname === "/old/rating" ? "bg-[#f4868f]" : ""
           }`}
         >
           <div className="flex flex-col justify-center leading-none text-[30px] text-white whitespace-nowrap font-bold [text-shadow:1px_0_0_#000,-1px_0_0_#000,0_1px_0_#000,0_-1px_0_#000,1px_1px_0_#000,-1px_-1px_0_#000,1px_-1px_0_#000,-1px_1px_0_#000]">
@@ -26,9 +26,9 @@ export default function Navigation() {
 
         {/* 플레이 기록 */}
         <Link
-          href="/home/log"
+          href="/old/log"
           className={`flex flex-1 h-full items-center justify-center overflow-hidden rounded-lg ${
-            pathname === "/home/log" ? "bg-[#f4868f]" : ""
+            pathname === "/old/log" ? "bg-[#f4868f]" : ""
           }`}
         >
           <div className="flex flex-col justify-center leading-none text-[30px] text-white whitespace-nowrap font-bold [text-shadow:1px_0_0_#000,-1px_0_0_#000,0_1px_0_#000,0_-1px_0_#000,1px_1px_0_#000,-1px_-1px_0_#000,1px_-1px_0_#000,-1px_1px_0_#000]">
