@@ -27,10 +27,10 @@ export default function SongRow({ song, game, rank }: SongRowProps) {
   const scoreStr = convertScore(song.ach, game);
   const displayMarks = buildDisplayMarks(song.ach, song.marks, game);
   const cmColors = game === 'maimai' ? MAI_CM_COLOR : (GAME_CM_COLOR[game] ?? MAI_CM_COLOR);
-  const rs = g.formatRS(g.calcRS(song.ach, song.lv));
+  const rs = g.formatRS(g.calcRS(song.ach, song.lv, song.marks));
   const displayLv = game === 'chunithm'
-    ? Math.round((song.lv + 0.7) * 10) / 10
-    : song.lv;
+    ? (Math.round((song.lv + 0.7) * 10) / 10).toFixed(1)
+    : song.lv.toFixed(1);
 
   const slots = MARK_SLOTS[game];
 

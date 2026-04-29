@@ -7,7 +7,7 @@ export interface GameConfig {
   accent: string;
   ratingLabel: string;
   rsLabel: string;
-  calcRS: (ach: number, lv: number) => number;
+  calcRS: (ach: number, lv: number, marks: string[]) => number;
   formatRS: (v: number) => string;
   formatTotal: (v: number) => string;
 }
@@ -40,8 +40,9 @@ export const GAMES: Record<GameId, GameConfig> = {
     ratingLabel: 'VOLFORCE',
     rsLabel: 'VF',
     calcRS: sdvxRS,
-    formatRS: (v) => v.toFixed(3),
-    formatTotal: (v) => v.toFixed(3),
+    // 밀리-VF → VF (/ 1000)
+    formatRS: (v) => (v / 1000).toFixed(3),
+    formatTotal: (v) => (v / 1000).toFixed(3),
   },
   arcaea: {
     id: 'arcaea',

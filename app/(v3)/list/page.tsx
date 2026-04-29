@@ -15,7 +15,7 @@ export default function ListPage() {
 
   const g = GAMES.maimai;
   const songs = (activeDiff === 'ALL' ? SONGS : SONGS.filter((s) => s.diff === activeDiff))
-    .map((s) => ({ ...s, _rs: g.calcRS(s.ach, s.lv) }));
+    .map((s) => ({ ...s, _rs: g.calcRS(s.ach, s.lv, s.marks) }));
 
   return (
     <div>

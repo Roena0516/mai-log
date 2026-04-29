@@ -20,7 +20,7 @@ export default function RatingPage() {
     if (game === 'maimai') {
       setConvertedTotal(PROFILE.maiRating);
     } else {
-      const total = SONGS.reduce((sum, s) => sum + g.calcRS(s.ach, s.lv), 0);
+      const total = SONGS.reduce((sum, s) => sum + g.calcRS(s.ach, s.lv, s.marks), 0);
       setConvertedTotal(g.formatTotal(total));
     }
   };
@@ -31,7 +31,7 @@ export default function RatingPage() {
 
   const g = GAMES[activeGame];
   const songsWithRS = [...SONGS]
-    .map((s) => ({ ...s, _rs: g.calcRS(s.ach, s.lv) }))
+    .map((s) => ({ ...s, _rs: g.calcRS(s.ach, s.lv, s.marks) }))
     .sort((a, b) => b._rs - a._rs);
 
   return (

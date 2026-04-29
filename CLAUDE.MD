@@ -44,6 +44,7 @@ mai-log/
     → POST /api/records 로 전송
     → Neon DB에 저장 (Prisma)
     → 프로필 페이지에서 환산 결과 표시
+    -> 101.0000%은 1010000으로 저장됨
 ```
 
 ## 데이터베이스 스키마 (Prisma)

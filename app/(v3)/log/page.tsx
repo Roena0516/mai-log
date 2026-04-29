@@ -12,7 +12,7 @@ export default function LogPage() {
 
   const g = GAMES.maimai;
 
-  let songs = SONGS.map((s) => ({ ...s, _rs: g.calcRS(s.ach, s.lv) }));
+  let songs = SONGS.map((s) => ({ ...s, _rs: g.calcRS(s.ach, s.lv, s.marks) }));
 
   if (diff !== 'ALL') {
     songs = songs.filter((s) => s.diff === diff);

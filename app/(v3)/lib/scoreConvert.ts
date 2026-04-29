@@ -42,30 +42,13 @@ export function convertScore(ach: number, game: GameId): string {
 
   let score: number;
   if (game === 'chunithm') {
-    if (ach >= 101)       score = 1010000;
-    else if (ach >= 100.5) score = Math.round(1009500 + (ach - 100.5) * 1000);
-    else if (ach >= 100)  score = Math.round(1009000 + (ach - 100) * 1000);
-    else if (ach >= 99)   score = Math.round(1000000 + (ach - 99) * 9000);
-    else if (ach >= 97.5) score = Math.round(975000 + (ach - 97.5) * 16667);
-    else                  score = Math.round(ach * 9800);
+    score = Math.round(ach * 10000);
   } else if (game === 'sdvx') {
-    score = Math.min(
-      ach >= 101  ? 10000000
-      : ach >= 100 ? Math.round(9900000 + (ach - 100) * 100000)
-      : ach >= 98  ? Math.round(9700000 + (ach - 98) * 100000)
-      : ach >= 97  ? Math.round(9500000 + (ach - 97) * 200000)
-      : Math.round(ach * 95000),
-      10000000,
-    );
+    // 선형 보간: (ach% × 10000) / 1010000 × 10,000,000
+    score = Math.round((Math.round(ach * 10000) / 1010000) * 10000000);
   } else {
-    score = Math.min(
-      ach >= 101   ? 10002500
-      : ach >= 100.5 ? Math.round(10001000 + (ach - 100.5) * 3000)
-      : ach >= 100   ? Math.round(10000000 + (ach - 100) * 2000)
-      : ach >= 99    ? Math.round(9900000 + (ach - 99) * 100000)
-      : Math.round(ach * 97000),
-      10002500,
-    );
+    // arcaea: linear mapping (achInt / 1010000) × 10,000,000
+    score = Math.round((Math.round(ach * 10000) / 1010000) * 10000000);
   }
   return score.toLocaleString();
 }
