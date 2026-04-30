@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { createContext, useContext, useState, type ReactNode } from 'react';
-import type { GameId } from '../lib/types';
+import { createContext, useContext, useState, type ReactNode } from "react";
+import type { GameId } from "../lib/types";
 
 interface GameContextValue {
   activeGame: GameId;
@@ -11,17 +11,19 @@ interface GameContextValue {
 }
 
 const GameContext = createContext<GameContextValue>({
-  activeGame: 'maimai',
+  activeGame: "maimai",
   setActiveGame: () => {},
-  convertedTotal: '15975',
+  convertedTotal: "",
   setConvertedTotal: () => {},
 });
 
 export function GameProvider({ children }: { children: ReactNode }) {
-  const [activeGame, setActiveGame] = useState<GameId>('maimai');
-  const [convertedTotal, setConvertedTotal] = useState('15975');
+  const [activeGame, setActiveGame] = useState<GameId>("maimai");
+  const [convertedTotal, setConvertedTotal] = useState("");
   return (
-    <GameContext.Provider value={{ activeGame, setActiveGame, convertedTotal, setConvertedTotal }}>
+    <GameContext.Provider
+      value={{ activeGame, setActiveGame, convertedTotal, setConvertedTotal }}
+    >
       {children}
     </GameContext.Provider>
   );

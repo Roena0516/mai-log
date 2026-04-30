@@ -36,6 +36,7 @@ const VERSION_MAP: Record<number, string> = {
 };
 
 // 신곡 기준: PRiSM PLUS(25500) + CiRCLE(26000) + CiRCLE PLUS(26500)
+// TODO: 이거 여기 말고 레이팅 계산식에 포함하는게 좋을 거 같은데
 const NEW_VERSION_THRESHOLD = 25500;
 
 const DIFF_KEYS = ["bas", "adv", "exp", "mas", "remas"] as const;
