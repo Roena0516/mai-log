@@ -175,3 +175,4 @@ DIRECT_URL=             # Prisma migrate용 direct 연결 (Neon 필수)
 - 환산 수치는 추정값이며, 각 게임의 공식 레이팅과 정확히 일치하지 않을 수 있음
 - 유저 데이터는 플레이 카운트가 이전보다 증가한 경우에만 갱신
 - Neon + Prisma 연결 시 `DATABASE_URL`과 `DIRECT_URL` 모두 설정 필요
+- 새로운 페이지를 제작할 시에는, 기존 페이지의 디자인을 따라가고 DESIGN.md를 참고

@@ -14,6 +14,7 @@ const TITLE_MAP: Record<string, string> = {
   '/log':      '플레이 기록',
   '/list':     '악곡 리스트',
   '/download': '다운로드',
+  '/sync':     '데이터 수집',
 };
 
 function TopBar() {
