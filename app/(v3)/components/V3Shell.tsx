@@ -6,7 +6,7 @@ import Sidebar from "./Sidebar";
 import { useGame } from "../context/GameContext";
 import { GAMES } from "../lib/games";
 import { T } from "../lib/tokens";
-import type { ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import Link from "next/link";
 
 const TITLE_MAP: Record<string, string> = {
@@ -23,6 +23,21 @@ function TopBar() {
   const { activeGame } = useGame();
   const title = TITLE_MAP[pathname] ?? "mai·log";
   const isRating = pathname === "/v3/rating";
+
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const checkLogin = async () => {
+      const res = await fetch("/api/auth/session");
+      const session = await res.json();
+      if (!session?.user?.id) {
+        setIsLoggedIn(false);
+        return;
+      }
+      setIsLoggedIn(true);
+    };
+    checkLogin();
+  }, []);
 
   return (
     <div
@@ -60,18 +75,33 @@ function TopBar() {
         <span style={{ fontSize: 10, color: T.muted, letterSpacing: "0.06em" }}>
           {/* {isRating ? GAMES[activeGame].label : "maimai DX"} */}
           {/* 로그인 버튼 */}
-          <Link
-            style={{
-              background: "none",
-              border: "none",
-              color: T.text,
-              fontSize: 10,
-              cursor: "pointer",
-            }}
-            href={"/api/auth/signin"}
-          >
-            로그인
-          </Link>
+          {!isLoggedIn ? (
+            <Link
+              style={{
+                background: "none",
+                border: "none",
+                color: T.text,
+                fontSize: 10,
+                cursor: "pointer",
+              }}
+              href={"/api/auth/signin"}
+            >
+              로그인
+            </Link>
+          ) : (
+            <Link
+              style={{
+                background: "none",
+                border: "none",
+                color: T.text,
+                fontSize: 10,
+                cursor: "pointer",
+              }}
+              href={"/api/auth/signout"}
+            >
+              로그아웃
+            </Link>
+          )}
         </span>
       </div>
     </div>
