@@ -14,9 +14,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko">
-      <body className={pretendard.className}>
-        {children}
-      </body>
+      <head>
+        <meta
+          name="google-site-verification"
+          content="mf7aL1uYp0QgpcvAHQQMmKbLrJiA0lGznuJIKC9d6us"
+        />
+      </head>
+      <body className={pretendard.className}>{children}</body>
     </html>
   );
 }
