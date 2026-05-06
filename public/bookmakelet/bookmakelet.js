@@ -1,5 +1,5 @@
 javascript: (async function () {
-  const SERVER_URL = "http://localhost:3000"; // 배포 URL로 변경
+  const SERVER_URL = "https://mai-log.roena.dev";
   const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
   // ── 최소 오버레이 (팝업 차단 대비 폴백용) ──────────────────────────
