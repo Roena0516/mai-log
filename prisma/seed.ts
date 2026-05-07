@@ -35,10 +35,6 @@ const VERSION_MAP: Record<number, string> = {
   26500: "CiRCLE PLUS",
 };
 
-// 신곡 기준: PRiSM PLUS(25500) + CiRCLE(26000) + CiRCLE PLUS(26500)
-// TODO: 이거 여기 말고 레이팅 계산식에 포함하는게 좋을 거 같은데
-const NEW_VERSION_THRESHOLD = 25500;
-
 const DIFF_KEYS = ["bas", "adv", "exp", "mas", "remas"] as const;
 const DIFF_TYPE_MAP: Record<string, string> = {
   bas: "basic",
@@ -75,7 +71,6 @@ async function main() {
     if (song.lev_utage && !song.lev_bas && !song.dx_lev_bas) continue;
 
     const version = parseInt(song.version);
-    const isNewVersion = version >= NEW_VERSION_THRESHOLD;
 
     const createdSong = await prisma.song.upsert({
       where: {
@@ -114,8 +109,7 @@ async function main() {
           levelValue: parseFloat(
             song[levelValueKey] ?? song[levelKey].replace("+", ".6"),
           ),
-          isNewVersion,
-        },
+                  },
         create: {
           songId: createdSong.id,
           isDx: false,
@@ -124,8 +118,7 @@ async function main() {
           levelValue: parseFloat(
             song[levelValueKey] ?? song[levelKey].replace("+", ".6"),
           ),
-          isNewVersion,
-        },
+                  },
       });
       chartCount++;
     }
@@ -149,8 +142,7 @@ async function main() {
           levelValue: parseFloat(
             song[levelValueKey] ?? song[levelKey].replace("+", ".6"),
           ),
-          isNewVersion,
-        },
+                  },
         create: {
           songId: createdSong.id,
           isDx: true,
@@ -159,8 +151,7 @@ async function main() {
           levelValue: parseFloat(
             song[levelValueKey] ?? song[levelKey].replace("+", ".6"),
           ),
-          isNewVersion,
-        },
+                  },
       });
       chartCount++;
     }

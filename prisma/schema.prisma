@@ -103,6 +103,5 @@ model Chart {
   difficultyType String
   level          String
   levelValue     Float
-  isNewVersion   Boolean @default(false)
   @@unique([songId, isDx, difficultyType])
 }

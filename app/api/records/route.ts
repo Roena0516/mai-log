@@ -48,13 +48,13 @@ export async function GET() {
 
     const charts = await prisma.chart.findMany({
       where: { song: { title: { in: allTitles } } },
-      include: { song: { select: { title: true } } },
+      include: { song: { select: { title: true, version: true } } },
     });
 
     const chartMap = new Map(
       charts.map((c) => [
         `${c.song.title}|${c.isDx}|${c.difficultyType}`,
-        { lv: c.levelValue, isNewVersion: c.isNewVersion },
+        { lv: c.levelValue, version: c.song.version },
       ]),
     );
 
@@ -74,7 +74,7 @@ export async function GET() {
           diff: DIFF_MAP[r.difficultyType] ?? r.difficultyType,
           marks,
           isDx: r.isDx,
-          isNewVersion: chart.isNewVersion,
+          version: chart.version,
         };
       })
       .filter((s) => s !== null);

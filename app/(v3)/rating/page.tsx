@@ -115,12 +115,10 @@ export default function RatingPage() {
 
   // maimai / CHUNITHM: 신곡 + 구곡 섹션
   if (activeGame === "maimai" || activeGame === "chunithm") {
-    const newSongs = withRS
-      .filter((s) => s.isNewVersion)
-      .sort((a, b) => b._rs - a._rs);
-    const oldSongs = withRS
-      .filter((s) => !s.isNewVersion)
-      .sort((a, b) => b._rs - a._rs);
+    const threshold = g.newVersionThreshold ?? 0;
+    const isNew = (s: SongWithRS) => (s.version ?? 0) >= threshold;
+    const newSongs = withRS.filter(isNew).sort((a, b) => b._rs - a._rs);
+    const oldSongs = withRS.filter((s) => !isNew(s)).sort((a, b) => b._rs - a._rs);
     const [newTop, oldTop] = activeGame === "maimai" ? [15, 35] : [20, 30];
 
     const renderSection = (list: SongWithRS[], top: number) =>

@@ -13,7 +13,7 @@ export interface Song {
   marks: MarkType[];
   lv: number;
   isDx?: boolean;
-  isNewVersion?: boolean;
+  version?: number;
 }
 
 export interface RecentLogEntry {

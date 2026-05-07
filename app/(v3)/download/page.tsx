@@ -206,14 +206,16 @@ export default function DownloadPage() {
 
   if (activeGame === 'maimai' || activeGame === 'chunithm') {
     const [newTop, oldTop] = activeGame === 'maimai' ? [15, 35] : [20, 30];
+    const threshold = g.newVersionThreshold ?? 0;
+    const isNew = (s: SongWithRS) => (s.version ?? 0) >= threshold;
     sections = [
       {
         label: activeGame === 'maimai' ? '신곡' : '현행',
-        songs: withRS.filter((s) => s.isNewVersion).sort((a, b) => b._rs - a._rs).slice(0, newTop),
+        songs: withRS.filter(isNew).sort((a, b) => b._rs - a._rs).slice(0, newTop),
       },
       {
         label: 'OTHERS',
-        songs: withRS.filter((s) => !s.isNewVersion).sort((a, b) => b._rs - a._rs).slice(0, oldTop),
+        songs: withRS.filter((s) => !isNew(s)).sort((a, b) => b._rs - a._rs).slice(0, oldTop),
       },
     ];
   } else if (activeGame === 'sdvx') {
