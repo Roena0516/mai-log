@@ -111,7 +111,44 @@ export function convertMarks(marks: string[], game: GameId): string[] {
   return marks;
 }
 
+export function getSdvxScoreRank(ach: number): string {
+  if (ach >= 99.99) return 'S';
+  if (ach >= 98.98) return 'AAA+';
+  if (ach >= 97.97) return 'AAA';
+  if (ach >= 95.95) return 'AA+';
+  if (ach >= 93.93) return 'AA';
+  if (ach >= 90.90) return 'A+';
+  if (ach >= 87.87) return 'A';
+  if (ach >= 75.75) return 'B';
+  if (ach >= 65.65) return 'C';
+  return 'D';
+}
+
+export function getArcaeaScoreRank(ach: number): string {
+  if (ach >= 99.99) return 'EX+';
+  if (ach >= 98.98) return 'EX';
+  if (ach >= 95.95) return 'AA';
+  if (ach >= 92.92) return 'A';
+  if (ach >= 89.89) return 'B';
+  if (ach >= 86.86) return 'C';
+  return 'D';
+}
+
 export function buildDisplayMarks(ach: number, marks: string[], game: GameId): string[] {
+  if (game === 'sdvx') {
+    const rank = getSdvxScoreRank(ach);
+    const hasAP = marks.includes('AP+') || marks.includes('AP');
+    const hasFC = marks.includes('FC+') || marks.includes('FC');
+    const clearMark = hasAP ? 'PUC' : hasFC ? 'UC' : ach >= 80.8 ? 'COMP' : 'PLAYED';
+    return [rank, clearMark];
+  }
+  if (game === 'arcaea') {
+    const rank = getArcaeaScoreRank(ach);
+    const hasAP = marks.includes('AP+') || marks.includes('AP');
+    const hasFC = marks.includes('FC+') || marks.includes('FC');
+    const clearMark = hasAP ? 'P' : hasFC ? 'F' : ach >= 80.8 ? 'C' : 'L';
+    return [rank, clearMark];
+  }
   const scoreRank = game === 'chunithm' ? getChunithumScoreRank(ach) : getScoreRank(ach);
   const baseMarks = [scoreRank, ...marks.filter(m => !SCORE_RANKS.includes(m))];
   return convertMarks(baseMarks, game);
@@ -127,8 +164,14 @@ export const MARK_SLOTS: Record<GameId, string[][]> = {
     ['SSS+','SSS','SS+','SS','S+','S','AAA','AA','A','BBB','BB','B','C','D'],
     ['AJC','AJ','FC+','FC'],
   ],
-  sdvx:   [['PUC'],['UC'],['HC'],['CLEAR']],
-  arcaea: [['PM'],['FR'],['CLEAR']],
+  sdvx: [
+    ['S','AAA+','AAA','AA+','AA','A+','A','B','C','D'],
+    ['PUC','UC','COMP','PLAYED'],
+  ],
+  arcaea: [
+    ['EX+','EX','AA','A','B','C','D'],
+    ['P','F','C','L'],
+  ],
 };
 
 export const MAI_CM_COLOR: Record<string, string> = {
@@ -146,8 +189,18 @@ export const GAME_CM_COLOR: Record<string, Record<string, string>> = {
     ...MAI_CM_COLOR,
     'AJC':'#ca8a04','AJ':'#f59e0b',
   },
-  sdvx:   { 'PUC':'#ca8a04','UC':'#f59e0b','HC':'#3b82f6','CLEAR':'#6b7280' },
-  arcaea: { 'PM':'#ca8a04','FR':'#3b82f6','CLEAR':'#6b7280' },
+  sdvx: {
+    'PUC':'#ca8a04','UC':'#f59e0b','COMP':'#3b82f6','PLAYED':'#6b7280',
+    'S':'#d97706','AAA+':'#f59e0b','AAA':'#fbbf24',
+    'AA+':'#fb923c','AA':'#fb923c',
+    'A+':'#60a5fa','A':'#93c5fd',
+    'B':'#4ade80','C':'#9ca3af','D':'#6b7280',
+  },
+  arcaea: {
+    'EX+':'#d97706','EX':'#a855f7','AA':'#c084fc','A':'#d8b4fe',
+    'B':'#60a5fa','D':'#6b7280',
+    'P':'#ca8a04','F':'#f59e0b','C':'#3b82f6','L':'#6b7280',
+  },
 };
 
 export const MAI_DIFF_COLOR: Record<string, string> = {

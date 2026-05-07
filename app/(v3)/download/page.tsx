@@ -12,6 +12,8 @@ import {
   convertDiff,
   MAI_DIFF_COLOR,
   GAME_DIFF_COLOR,
+  MAI_CM_COLOR,
+  GAME_CM_COLOR,
 } from "../lib/scoreConvert";
 import type { GameId, Song, RecentLogEntry, DiffType } from "../lib/types";
 
@@ -78,6 +80,9 @@ function JacketCard({
   const scoreStr = convertScore(song.ach, game);
   const allMarks = buildDisplayMarks(song.ach, song.marks, game);
   const mark = allMarks[0] ?? "";
+  const clearMark = game === "maimai"
+    ? (allMarks.find((m) => ["AP+", "AP", "FC+", "FC"].includes(m)) ?? "")
+    : (allMarks[1] ?? "");
   const diffColor = getDiffColor(song.diff, song.lv, game, song.version);
   const diffLabel =
     game === "maimai"
@@ -129,16 +134,12 @@ function JacketCard({
         }}
       />
 
-      {/* rank + DX/ST badge */}
+      {/* rank badge */}
       <div
         style={{
           position: "absolute",
           top: 5,
           left: 6,
-          right: 6,
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
         }}
       >
         <span
@@ -151,18 +152,6 @@ function JacketCard({
         >
           #{rank}
         </span>
-        {game === "maimai" && (
-          <span
-            style={{
-              fontSize: 7,
-              fontWeight: 800,
-              letterSpacing: "0.06em",
-              color: song.isDx ? "#f97316" : "rgba(255,255,255,0.5)",
-            }}
-          >
-            {song.isDx ? "DX" : "ST"}
-          </span>
-        )}
       </div>
 
       {/* bottom info */}
@@ -193,6 +182,28 @@ function JacketCard({
 
         <div
           style={{
+            display: "flex",
+            alignItems: "baseline",
+            fontVariantNumeric: "tabular-nums",
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+          }}
+        >
+          <span style={{ fontSize: 9, fontWeight: 700, color: "rgba(255,255,255,0.9)", letterSpacing: "-0.01em" }}>
+            {displayLv}
+          </span>
+          <span style={{ fontSize: 8, fontWeight: 600, color: "rgba(255,255,255,0.78)", letterSpacing: "-0.01em", marginLeft: 4 }}>
+            {scoreStr}
+          </span>
+          {game === "maimai" && (
+            <span style={{ fontSize: 7, fontWeight: 800, letterSpacing: "0.06em", color: song.isDx ? "#f97316" : "rgba(255,255,255,0.65)", marginLeft: "auto" }}>
+              {song.isDx ? "DX" : "ST"}
+            </span>
+          )}
+        </div>
+
+        <div
+          style={{
             fontSize: 9,
             fontWeight: 600,
             color: "#ddd",
@@ -203,19 +214,6 @@ function JacketCard({
           }}
         >
           {song.name}
-        </div>
-
-        <div
-          style={{
-            fontSize: 8,
-            color: "rgba(255,255,255,0.72)",
-            letterSpacing: "-0.01em",
-            fontVariantNumeric: "tabular-nums",
-            whiteSpace: "nowrap",
-            overflow: "hidden",
-          }}
-        >
-          {displayLv} · {scoreStr}
         </div>
 
         <div
@@ -235,18 +233,36 @@ function JacketCard({
           >
             {diffLabel}
           </span>
-          {mark && (
-            <span
-              style={{
-                fontSize: 7,
-                fontWeight: 700,
-                color: "rgba(255,255,255,0.65)",
-                letterSpacing: "0.03em",
-              }}
-            >
-              {mark}
-            </span>
-          )}
+          <div style={{ display: "flex", gap: 3, alignItems: "center" }}>
+            {clearMark && (
+              <span
+                style={{
+                  fontSize: 7,
+                  fontWeight: 700,
+                  color: game === "maimai"
+                    ? (MAI_CM_COLOR[clearMark] ?? "rgba(255,255,255,0.55)")
+                    : (GAME_CM_COLOR[game]?.[clearMark] ?? "rgba(255,255,255,0.55)"),
+                  letterSpacing: "0.03em",
+                }}
+              >
+                {clearMark}
+              </span>
+            )}
+            {mark && (
+              <span
+                style={{
+                  fontSize: 7,
+                  fontWeight: 700,
+                  color: game === "maimai"
+                    ? (MAI_CM_COLOR[mark] ?? "rgba(255,255,255,0.65)")
+                    : (GAME_CM_COLOR[game]?.[mark] ?? "rgba(255,255,255,0.65)"),
+                  letterSpacing: "0.03em",
+                }}
+              >
+                {mark}
+              </span>
+            )}
+          </div>
         </div>
       </div>
     </div>
