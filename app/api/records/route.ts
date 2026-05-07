@@ -137,7 +137,6 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: false, error: "nickname required" }, { status: 400 });
     }
 
-    // 세션의 userId로 업데이트 (다른 유저 데이터 덮어쓰기 방지)
     const user = await prisma.user.update({
       where: { id: session.user.id },
       data: {

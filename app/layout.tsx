@@ -1,5 +1,6 @@
 import localFont from "next/font/local";
 import "./globals.css";
+import Providers from "./Providers";
 
 const pretendard = localFont({
   src: "./fonts/PretendardVariable.ttf",
@@ -20,7 +21,9 @@ export default function RootLayout({
           content="mf7aL1uYp0QgpcvAHQQMmKbLrJiA0lGznuJIKC9d6us"
         />
       </head>
-      <body className={pretendard.className}>{children}</body>
+      <body className={pretendard.className}>
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 }

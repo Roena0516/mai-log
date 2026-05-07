@@ -108,6 +108,48 @@ function TopBar() {
   );
 }
 
+function ViewingBanner() {
+  const { viewedUsername, ownUsername, isOwnProfile } = useGame();
+  if (!viewedUsername || isOwnProfile) return null;
+  return (
+    <div
+      style={{
+        background: "#1a1400",
+        borderBottom: "1px solid #3a2e00",
+        padding: "8px 24px",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        gap: 12,
+        fontSize: 11,
+        color: "#a89060",
+        letterSpacing: "0.04em",
+      }}
+    >
+      <span>
+        <span style={{ color: "#d4a853", fontWeight: 700 }}>{viewedUsername}</span>
+        의 기록을 보는 중
+      </span>
+      {ownUsername && (
+        <Link
+          href={`/${ownUsername}/rating`}
+          style={{
+            fontSize: 10,
+            fontWeight: 700,
+            color: "#d4a853",
+            textDecoration: "none",
+            letterSpacing: "0.06em",
+            padding: "3px 10px",
+            border: "1px solid #3a2e00",
+          }}
+        >
+          내 기록으로
+        </Link>
+      )}
+    </div>
+  );
+}
+
 function ShellInner({ children }: { children: ReactNode }) {
   return (
     <div style={{ display: "flex", minHeight: "100vh", background: T.bg }}>
@@ -122,6 +164,7 @@ function ShellInner({ children }: { children: ReactNode }) {
         }}
       >
         <TopBar />
+        <ViewingBanner />
         <main style={{ flex: 1 }}>
           <div style={{ padding: "0 24px 48px" }}>{children}</div>
         </main>
