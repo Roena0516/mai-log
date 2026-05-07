@@ -10,7 +10,7 @@ maimai DX 플레이 데이터를 아르케아(Arcaea), SOUND VOLTEX, 츄니즘(C
 
 - **Frontend**: TypeScript, Next.js (App Router), Zustand, Tailwind CSS
 - **Database**: Neon (Serverless PostgreSQL), Prisma ORM
-- **Deployment**: Cloudflare Pages
+- **Deployment**: Vercel
 
 ## 프로젝트 구조
 

@@ -92,7 +92,7 @@ export default function SyncPage() {
             prev.map((s) => (s.id === 'save' ? { ...s, status: 'done' } : s)),
           );
           setDone(true);
-          setTimeout(() => router.push(`/${data.userProfile?.nickname}`), 1800);
+          setTimeout(() => router.push(`/rating`), 1800);
         } catch (err) {
           setSteps((prev) =>
             prev.map((s) => (s.id === 'save' ? { ...s, status: 'error' } : s)),

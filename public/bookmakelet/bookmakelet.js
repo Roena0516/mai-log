@@ -118,13 +118,17 @@ javascript: (async function () {
         const el = [...pDoc.querySelectorAll(".m_5.m_b_5.t_r.f_12")].find((e) =>
           e.textContent?.includes("maimaiDX total play count"),
         );
-        return el ? extractNum(el.textContent?.split("：")[1]) : 0;
+        if (!el) return 0;
+        const match = el.textContent?.match(/maimaiDX total play count：([\d,]+)/);
+        return match ? parseInt(match[1].replace(/,/g, ""), 10) : 0;
       })(),
       playCountVersion: (() => {
         const el = [...pDoc.querySelectorAll(".m_5.m_b_5.t_r.f_12")].find((e) =>
           e.textContent?.includes("play count of current version"),
         );
-        return el ? extractNum(el.textContent?.split("：")[1]) : 0;
+        if (!el) return 0;
+        const match = el.textContent?.match(/play count of current version：([\d,]+)/);
+        return match ? parseInt(match[1].replace(/,/g, ""), 10) : 0;
       })(),
     };
 
