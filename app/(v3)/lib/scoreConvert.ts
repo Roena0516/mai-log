@@ -155,7 +155,7 @@ export const MAI_DIFF_COLOR: Record<string, string> = {
   'ADVANCED':'#ea580c',
   'EXPERT':'#dc2626',
   'MASTER':'#9333ea',
-  'Re:MASTER':'#7c3aed',
+  'Re:MASTER':'#c084fc',
 };
 
 export const GAME_DIFF_COLOR: Record<string, Record<string, string>> = {

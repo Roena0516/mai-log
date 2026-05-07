@@ -48,13 +48,13 @@ export async function GET() {
 
     const charts = await prisma.chart.findMany({
       where: { song: { title: { in: allTitles } } },
-      include: { song: { select: { title: true, version: true } } },
+      include: { song: { select: { title: true, version: true, imageUrl: true } } },
     });
 
     const chartMap = new Map(
       charts.map((c) => [
         `${c.song.title}|${c.isDx}|${c.difficultyType}`,
-        { lv: c.levelValue, version: c.song.version },
+        { lv: c.levelValue, version: c.song.version, imageUrl: c.song.imageUrl },
       ]),
     );
 
@@ -75,6 +75,7 @@ export async function GET() {
           marks,
           isDx: r.isDx,
           version: chart.version,
+          imageUrl: chart.imageUrl,
         };
       })
       .filter((s) => s !== null);
@@ -89,6 +90,7 @@ export async function GET() {
           lv: chart.lv,
           isDx: r.isDx,
           diff: DIFF_MAP[r.difficultyType] ?? r.difficultyType,
+          imageUrl: chart.imageUrl,
         };
       })
       .filter((s) => s !== null);

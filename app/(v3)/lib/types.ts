@@ -14,6 +14,7 @@ export interface Song {
   lv: number;
   isDx?: boolean;
   version?: number;
+  imageUrl?: string;
 }
 
 export interface RecentLogEntry {
@@ -22,4 +23,5 @@ export interface RecentLogEntry {
   lv: number;
   isDx: boolean;
   diff: string;
+  imageUrl?: string;
 }
