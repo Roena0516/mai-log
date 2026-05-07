@@ -45,22 +45,7 @@ function SectionHeader({ label, count }: { label: string; count: number }) {
 
 export default function RatingPage() {
   const [activeGame, setActiveGame] = useState<GameId>("maimai");
-  const [songs, setSongs] = useState<Song[]>([]);
-  const [recentLogs, setRecentLogs] = useState<RecentLogEntry[]>([]);
-  const [loading, setLoading] = useState(true);
-  const { setActiveGame: setCtxGame, setConvertedTotal } = useGame();
-
-  useEffect(() => {
-    fetch("/api/records")
-      .then((r) => r.json())
-      .then((data) => {
-        if (data.ok) {
-          setSongs(data.songs);
-          setRecentLogs(data.recentLogs ?? []);
-        }
-      })
-      .finally(() => setLoading(false));
-  }, []);
+  const { setActiveGame: setCtxGame, setConvertedTotal, songs, recentLogs, recordsLoading: loading } = useGame();
 
   const updateGame = (game: GameId) => {
     setActiveGame(game);

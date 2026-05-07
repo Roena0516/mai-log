@@ -1,24 +1,16 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import FilterBar, { type SortOption, type DiffOption } from '../components/FilterBar';
 import SongRow from '../components/SongRow';
 import { GAMES } from '../lib/games';
 import { T } from '../lib/tokens';
-import type { Song } from '../lib/types';
+import { useGame } from '../context/GameContext';
 
 export default function LogPage() {
   const [sort, setSort] = useState<SortOption>('레이팅 점수');
   const [diff, setDiff] = useState<DiffOption>('ALL');
-  const [songs, setSongs] = useState<Song[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetch('/api/records')
-      .then((r) => r.json())
-      .then((data) => { if (data.ok) setSongs(data.songs); })
-      .finally(() => setLoading(false));
-  }, []);
+  const { songs, recordsLoading: loading } = useGame();
 
   const g = GAMES.maimai;
 
@@ -53,7 +45,7 @@ export default function LogPage() {
         onSortChange={setSort}
         onDiffChange={setDiff}
       />
-      {filtered.map((s, i) => (
+      {filtered.map((s) => (
         <SongRow key={`${s.name}-${s.diff}-${s.isDx}`} song={s} game="maimai" />
       ))}
     </div>

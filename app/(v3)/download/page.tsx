@@ -1,6 +1,7 @@
 'use client';
 
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState } from 'react';
+import { useGame } from '../context/GameContext';
 import { toPng } from 'html-to-image';
 import GameTabs from '../components/GameTabs';
 import { GAMES } from '../lib/games';
@@ -162,23 +163,9 @@ function CardGrid({ songs, game }: { songs: CardSong[]; game: GameId }) {
 
 export default function DownloadPage() {
   const [activeGame, setActiveGame] = useState<GameId>('maimai');
-  const [songs, setSongs] = useState<Song[]>([]);
-  const [recentLogs, setRecentLogs] = useState<RecentLogEntry[]>([]);
-  const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const captureRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    fetch('/api/records')
-      .then((r) => r.json())
-      .then((data) => {
-        if (data.ok) {
-          setSongs(data.songs);
-          setRecentLogs(data.recentLogs ?? []);
-        }
-      })
-      .finally(() => setLoading(false));
-  }, []);
+  const { songs, recentLogs, recordsLoading: loading } = useGame();
 
   const handleSave = async () => {
     if (!captureRef.current || saving) return;
