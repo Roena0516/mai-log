@@ -118,7 +118,9 @@ export default function RatingPage() {
     const threshold = g.newVersionThreshold ?? 0;
     const isNew = (s: SongWithRS) => (s.version ?? 0) >= threshold;
     const newSongs = withRS.filter(isNew).sort((a, b) => b._rs - a._rs);
-    const oldSongs = withRS.filter((s) => !isNew(s)).sort((a, b) => b._rs - a._rs);
+    const oldSongs = withRS
+      .filter((s) => !isNew(s))
+      .sort((a, b) => b._rs - a._rs);
     const [newTop, oldTop] = activeGame === "maimai" ? [15, 35] : [20, 30];
 
     const renderSection = (list: SongWithRS[], top: number) =>
@@ -136,9 +138,9 @@ export default function RatingPage() {
     return (
       <div>
         <GameTabs active={activeGame} onChange={updateGame} />
-        <SectionHeader label="신곡" count={newTop} />
+        <SectionHeader label="NEW" count={newTop} />
         {renderSection(newSongs, newTop)}
-        <SectionHeader label="구곡" count={oldTop} />
+        <SectionHeader label="OTHERS" count={oldTop} />
         {renderSection(oldSongs, oldTop)}
       </div>
     );
@@ -150,6 +152,7 @@ export default function RatingPage() {
     return (
       <div>
         <GameTabs active={activeGame} onChange={updateGame} />
+        <SectionHeader label="VOLFORCE" count={50} />
         {top50.map((s, i) => (
           <SongRow
             key={`${s.name}-${s.diff}-${s.isDx}`}
