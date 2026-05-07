@@ -103,6 +103,7 @@ export async function GET() {
 interface UserProfile {
   nickname: string;
   title?: string;
+  iconUrl?: string | null;
   playCountTotal?: number;
   playCountVersion?: number;
 }
@@ -140,6 +141,7 @@ export async function POST(req: NextRequest) {
       data: {
         nickname: userProfile.nickname,
         title: userProfile.title,
+        iconUrl: userProfile.iconUrl ?? null,
         playCountTotal: userProfile.playCountTotal ?? 0,
         playCountVersion: userProfile.playCountVersion ?? 0,
       },

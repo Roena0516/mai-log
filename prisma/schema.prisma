@@ -15,6 +15,7 @@ model User {
   image         String?
   nickname      String?   @unique
   title         String?
+  iconUrl       String?
   playCountTotal   Int    @default(0)
   playCountVersion Int    @default(0)
   createdAt     DateTime  @default(now())

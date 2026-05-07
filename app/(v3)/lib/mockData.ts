@@ -84,6 +84,7 @@ export const SONGS: Song[] = [
 export const PROFILE = {
   title: "Loading...",
   nickname: "Loading...",
+  iconUrl: null as string | null,
   maiRating: "Loading...",
   dan: "Loading...",
   otomo: "Loading...",

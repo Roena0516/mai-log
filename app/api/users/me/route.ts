@@ -17,6 +17,7 @@ export async function GET() {
       select: {
         nickname: true,
         title: true,
+        iconUrl: true,
         playCountTotal: true,
         playCountVersion: true,
       },

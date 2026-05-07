@@ -114,6 +114,7 @@ javascript: (async function () {
         pDoc
           .querySelector(".trophy_inner_block.f_13 span")
           ?.textContent?.trim() ?? "",
+      iconUrl: pDoc.querySelector('img[src*="img/Icon"]')?.getAttribute("src") ?? null,
       playCountTotal: (() => {
         const el = [...pDoc.querySelectorAll(".m_5.m_b_5.t_r.f_12")].find((e) =>
           e.textContent?.includes("maimaiDX total play count"),
