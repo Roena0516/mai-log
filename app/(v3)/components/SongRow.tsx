@@ -16,7 +16,7 @@ interface SongRowProps {
 
 export default function SongRow({ song, game, rank }: SongRowProps) {
   const g = GAMES[game];
-  const convertedDiff = convertDiff(song.lv, game, song.diff);
+  const convertedDiff = convertDiff(song.lv, game, song.diff, song.version);
   const diffName = convertedDiff || song.diff;
 
   const diffColor =

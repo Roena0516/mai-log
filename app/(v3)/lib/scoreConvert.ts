@@ -53,13 +53,23 @@ export function convertScore(ach: number, game: GameId): string {
   return score.toLocaleString();
 }
 
-export function convertDiff(lv: number, game: GameId, diff: DiffType): string | null {
+function getSdvxReMasterName(version: number): string {
+  if (version >= 26500) return 'NABLA';
+  if (version >= 22000) return 'EXCEED';
+  if (version >= 20000) return 'VIVID';
+  if (version >= 18000) return 'HEAVENLY';
+  if (version >= 14000) return 'GRAVITY';
+  return 'INFINITE';
+}
+
+export function convertDiff(lv: number, game: GameId, diff: DiffType, version?: number): string | null {
   if (game === 'maimai') return null;
   if (game === 'chunithm') {
     if (diff === 'Re:MASTER') return 'ULTIMA';
     return diff;
   }
   if (game === 'sdvx') {
+    if (diff === 'Re:MASTER') return getSdvxReMasterName(version ?? 0);
     if (lv >= 14) return 'MAXIMUM';
     if (lv >= 11) return 'EXHAUST';
     if (lv >= 8)  return 'ADVANCED';
@@ -155,6 +165,8 @@ export const GAME_DIFF_COLOR: Record<string, Record<string, string>> = {
   },
   sdvx: {
     'NOVICE':'#16a34a','ADVANCED':'#2563eb','EXHAUST':'#dc2626','MAXIMUM':'#7c3aed',
+    'INFINITE':'#c026d3','GRAVITY':'#ea580c','HEAVENLY':'#0ea5e9',
+    'VIVID':'#ec4899','EXCEED':'#d97706','NABLA':'#0d9488',
   },
   arcaea: {
     'Past':'#64748b','Present':'#059669','Future':'#7c3aed','Beyond':'#dc2626',
