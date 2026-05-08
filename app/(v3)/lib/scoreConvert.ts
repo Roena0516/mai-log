@@ -70,15 +70,15 @@ export function convertDiff(lv: number, game: GameId, diff: DiffType, version?: 
   }
   if (game === 'sdvx') {
     if (diff === 'Re:MASTER') return getSdvxReMasterName(version ?? 0);
-    if (lv >= 14) return 'MAXIMUM';
-    if (lv >= 11) return 'EXHAUST';
-    if (lv >= 8)  return 'ADVANCED';
+    if (diff === 'MASTER') return 'MAXIMUM';
+    if (diff === 'EXPERT') return 'EXHAUST';
+    if (diff === 'ADVANCED') return 'ADVANCED';
     return 'NOVICE';
   }
   if (game === 'arcaea') {
-    if (lv >= 9) return 'Beyond';
-    if (lv >= 7) return 'Future';
-    if (lv >= 5) return 'Present';
+    if (diff === 'Re:MASTER') return 'Eternal';
+    if (diff === 'MASTER') return 'Future';
+    if (diff === 'EXPERT') return 'Present';
     return 'Past';
   }
   return null;
@@ -87,10 +87,9 @@ export function convertDiff(lv: number, game: GameId, diff: DiffType, version?: 
 export function convertMarks(marks: string[], game: GameId): string[] {
   if (game === 'maimai') return marks;
 
-  const hasAP  = marks.includes('AP+') || marks.includes('AP');
-  const hasFC  = marks.includes('FC+') || marks.includes('FC');
-  const hasFS  = ['FSD+','FSD','FS+','FS'].some(m => marks.includes(m));
-  const hasSSS = marks.includes('SSS+') || marks.includes('SSS');
+  const hasAP = marks.includes('AP+') || marks.includes('AP');
+  const hasFC = marks.includes('FC+') || marks.includes('FC');
+  const hasFS = ['FSD+','FSD','FS+','FS'].some(m => marks.includes(m));
 
   if (game === 'chunithm') {
     return marks
@@ -98,9 +97,9 @@ export function convertMarks(marks: string[], game: GameId): string[] {
       .map(m => m === 'AP+' ? 'AJC' : m === 'AP' ? 'AJ' : m);
   }
   if (game === 'sdvx') {
-    if (hasAP && hasSSS) return ['PUC'];
-    if (hasAP || hasFC)  return ['UC'];
-    if (hasFS)           return ['HC'];
+    if (hasAP)  return ['PUC'];
+    if (hasFC)  return ['UC'];
+    if (hasFS)  return ['HC'];
     return ['CLEAR'];
   }
   if (game === 'arcaea') {

@@ -107,3 +107,12 @@ model Chart {
   levelValue     Float
   @@unique([songId, isDx, difficultyType])
 }
+
+model SongAlias {
+  id        String   @id @default(cuid())
+  title     String
+  alias     String
+  createdAt DateTime @default(now())
+
+  @@unique([title, alias])
+}
