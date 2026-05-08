@@ -43,7 +43,6 @@ export default async function HomePage() {
       select: { username: true },
     });
     if (!user?.username) redirect('/setup');
-    redirect(`/${user.username}/rating`);
   }
   return (
     <div style={{ maxWidth: 560, padding: '48px 0 80px' }}>

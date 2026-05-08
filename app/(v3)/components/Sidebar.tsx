@@ -10,7 +10,6 @@ import { useEffect, useState } from "react";
 const NAV_LABELS = [
   { label: "레이팅", sub: "rating" },
   { label: "플레이 기록", sub: "log" },
-  { label: "악곡 리스트", sub: "list" },
   { label: "다운로드", sub: "download" },
 ];
 

@@ -1,40 +1,82 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import FilterBar, { type SortOption, type DiffOption } from '../../components/FilterBar';
-import SongRow from '../../components/SongRow';
-import { GAMES } from '../../lib/games';
-import { T } from '../../lib/tokens';
-import { useGame } from '../../context/GameContext';
+import { useState, useEffect, useRef } from "react";
+import FilterBar, {
+  type SortOption,
+  type DiffOption,
+} from "../../components/FilterBar";
+import SongRow from "../../components/SongRow";
+import { GAMES } from "../../lib/games";
+import { T } from "../../lib/tokens";
+import { useGame } from "../../context/GameContext";
+
+const PAGE_SIZE = 30;
 
 export default function LogPage() {
-  const [sort, setSort] = useState<SortOption>('레이팅 점수');
-  const [diff, setDiff] = useState<DiffOption>('ALL');
+  const [sort, setSort] = useState<SortOption>("레이팅 점수");
+  const [diff, setDiff] = useState<DiffOption>("ALL");
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+  const sentinelRef = useRef<HTMLDivElement>(null);
   const { songs, recordsLoading: loading } = useGame();
 
   const g = GAMES.maimai;
 
-  let filtered = songs.map((s) => ({ ...s, _rs: g.calcRS(s.ach, s.lv, s.marks) }));
+  let filtered = songs.map((s) => ({
+    ...s,
+    _rs: g.calcRS(s.ach, s.lv, s.marks),
+  }));
+  if (diff !== "ALL") filtered = filtered.filter((s) => s.diff === diff);
+  if (sort === "레이팅 점수") filtered.sort((a, b) => b._rs - a._rs);
+  else if (sort === "달성률") filtered.sort((a, b) => b.ach - a.ach);
+  else filtered.sort((a, b) => b.lv - a.lv);
 
-  if (diff !== 'ALL') {
-    filtered = filtered.filter((s) => s.diff === diff);
-  }
+  useEffect(() => {
+    setVisibleCount(PAGE_SIZE);
+  }, [sort, diff]);
 
-  if (sort === '레이팅 점수') {
-    filtered.sort((a, b) => b._rs - a._rs);
-  } else if (sort === '달성률') {
-    filtered.sort((a, b) => b.ach - a.ach);
-  } else {
-    filtered.sort((a, b) => b.lv - a.lv);
-  }
+  useEffect(() => {
+    const el = sentinelRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) setVisibleCount((c) => c + PAGE_SIZE);
+      },
+      { rootMargin: "200px" },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [filtered.length]);
 
   if (loading) {
-    return <div style={{ padding: '40px 0', textAlign: 'center', color: T.sub, fontSize: 13 }}>불러오는 중...</div>;
+    return (
+      <div
+        style={{
+          padding: "40px 0",
+          textAlign: "center",
+          color: T.sub,
+          fontSize: 13,
+        }}
+      >
+        불러오는 중...
+      </div>
+    );
+  }
+  if (songs.length === 0) {
+    return (
+      <div
+        style={{
+          padding: "40px 0",
+          textAlign: "center",
+          color: T.sub,
+          fontSize: 13,
+        }}
+      >
+        북마클릿으로 기록을 수집하면 여기에 표시됩니다.
+      </div>
+    );
   }
 
-  if (songs.length === 0) {
-    return <div style={{ padding: '40px 0', textAlign: 'center', color: T.sub, fontSize: 13 }}>북마클릿으로 기록을 수집하면 여기에 표시됩니다.</div>;
-  }
+  const visible = filtered.slice(0, visibleCount);
 
   return (
     <div>
@@ -45,9 +87,12 @@ export default function LogPage() {
         onSortChange={setSort}
         onDiffChange={setDiff}
       />
-      {filtered.map((s) => (
+      {visible.map((s) => (
         <SongRow key={`${s.name}-${s.diff}-${s.isDx}`} song={s} game="maimai" />
       ))}
+      {visibleCount < filtered.length && (
+        <div ref={sentinelRef} style={{ height: 1 }} />
+      )}
     </div>
   );
 }
