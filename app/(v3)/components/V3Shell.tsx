@@ -110,37 +110,39 @@ function TopBar() {
 
 function ViewingBanner() {
   const { viewedUsername, ownUsername, isOwnProfile } = useGame();
-  if (!viewedUsername || isOwnProfile) return null;
+  if (!viewedUsername || isOwnProfile || ownUsername === null) return null;
   return (
     <div
       style={{
-        background: "#1a1400",
-        borderBottom: "1px solid #3a2e00",
-        padding: "8px 24px",
+        background: "#111111",
+        height: 40,
+        padding: "0 24px",
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
         gap: 12,
-        fontSize: 11,
-        color: "#a89060",
+        fontSize: 13,
+        color: "#fff",
         letterSpacing: "0.04em",
       }}
     >
-      <span>
-        <span style={{ color: "#d4a853", fontWeight: 700 }}>{viewedUsername}</span>
+      <span style={{ lineHeight: 1 }}>
+        <span style={{ color: "#ffffff", fontWeight: 700 }}>
+          {viewedUsername}
+        </span>
         의 기록을 보는 중
       </span>
       {ownUsername && (
         <Link
           href={`/${ownUsername}/rating`}
           style={{
-            fontSize: 10,
+            fontSize: 12,
             fontWeight: 700,
-            color: "#d4a853",
+            color: "#fff",
             textDecoration: "none",
             letterSpacing: "0.06em",
-            padding: "3px 10px",
-            border: "1px solid #3a2e00",
+            lineHeight: 1,
+            border: "none",
           }}
         >
           내 기록으로

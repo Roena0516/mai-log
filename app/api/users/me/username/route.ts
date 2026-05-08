@@ -23,7 +23,7 @@ export async function PUT(req: NextRequest) {
 
     if (!username || !isValidUsername(username)) {
       return NextResponse.json(
-        { ok: false, error: "영소문자·숫자·하이픈 3~30자, 시작/끝은 영소문자·숫자" },
+        { ok: false, error: "영소문자, 숫자, 하이픈 3~30자, 시작과 끝은 영소문자 또는 숫자여야 합니다." },
         { status: 400 },
       );
     }

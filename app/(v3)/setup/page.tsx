@@ -86,9 +86,7 @@ export default function SetupPage() {
           </span>
           <input
             value={value}
-            onChange={(e) =>
-              setValue(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""))
-            }
+            onChange={(e) => setValue(e.target.value)}
             placeholder="username"
             maxLength={30}
             autoFocus

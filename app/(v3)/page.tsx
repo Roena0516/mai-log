@@ -1,3 +1,6 @@
+import { redirect } from 'next/navigation';
+import { auth } from '@/auth';
+import { prisma } from '@/lib/prisma';
 import { T } from './lib/tokens';
 
 const STEPS = [
@@ -32,7 +35,16 @@ const SUPPORTED_GAMES = [
 
 const bookmarklet = `javascript:(function(){var d=document,s=d.createElement('script');s.src='https://mai-log.example.com/bookmarklet.js?t='+Date.now();d.head.appendChild(s);})()`;
 
-export default function HomePage() {
+export default async function HomePage() {
+  const session = await auth();
+  if (session?.user?.id) {
+    const user = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { username: true },
+    });
+    if (!user?.username) redirect('/setup');
+    redirect(`/${user.username}/rating`);
+  }
   return (
     <div style={{ maxWidth: 560, padding: '48px 0 80px' }}>
       {/* hero */}

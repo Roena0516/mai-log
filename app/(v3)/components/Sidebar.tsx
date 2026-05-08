@@ -16,18 +16,19 @@ const NAV_LABELS = [
 
 export default function Sidebar() {
   const pathname = usePathname();
-  const { activeGame, convertedTotal, viewedUsername } = useGame();
+  const { activeGame, convertedTotal, viewedUsername, ownUsername } = useGame();
   const g = GAMES[activeGame];
   const [profile, setProfile] = useState(PROFILE);
 
   useEffect(() => {
-    const url = viewedUsername
+    const isViewingOther = viewedUsername && viewedUsername !== ownUsername;
+    const url = isViewingOther
       ? `/api/users/${viewedUsername}/profile`
       : "/api/users/me";
     fetch(url)
       .then((r) => r.json())
       .then((data) => { if (data.ok) setProfile(data.profile); });
-  }, [viewedUsername]);
+  }, [viewedUsername, ownUsername]);
 
   const base = viewedUsername ? `/${viewedUsername}` : null;
 
