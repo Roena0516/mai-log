@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { T } from '../lib/tokens';
 import type { GameId } from '../lib/types';
 import type { Song } from '../lib/types';
@@ -7,6 +8,7 @@ import {
   MAI_DIFF_COLOR, GAME_DIFF_COLOR,
 } from '../lib/scoreConvert';
 import { GAMES } from '../lib/games';
+import SongModal from './SongModal';
 
 interface SongRowProps {
   song: Song;
@@ -15,6 +17,8 @@ interface SongRowProps {
 }
 
 export default function SongRow({ song, game, rank }: SongRowProps) {
+  const [modalOpen, setModalOpen] = useState(false);
+  const [hovered, setHovered] = useState(false);
   const g = GAMES[game];
   const convertedDiff = convertDiff(song.lv, game, song.diff, song.version);
   const diffName = convertedDiff || song.diff;
@@ -40,16 +44,23 @@ export default function SongRow({ song, game, rank }: SongRowProps) {
   const slots = MARK_SLOTS[game];
 
   return (
+    <>
+    {modalOpen && <SongModal song={song} onClose={() => setModalOpen(false)} />}
     <div
       className="group"
+      onClick={() => setModalOpen(true)}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
       style={{
         display: 'grid',
         gridTemplateColumns: '3px 44px 1fr auto auto auto',
         alignItems: 'center',
         gap: 0,
-        background: T.surface,
+        background: hovered ? T.bg : T.surface,
         borderBottom: `1px solid ${T.line}`,
         minHeight: 52,
+        cursor: 'pointer',
+        transition: 'background 0.1s',
       }}
     >
       {/* diff accent bar */}
@@ -197,5 +208,6 @@ export default function SongRow({ song, game, rank }: SongRowProps) {
         </span>
       </div>
     </div>
+    </>
   );
 }

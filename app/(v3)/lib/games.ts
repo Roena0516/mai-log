@@ -29,8 +29,14 @@ export const GAMES: Record<GameId, GameConfig> = {
     formatTotal: (v) => String(v),
     calcTotal: (songs) => {
       const isNew = (s: SongWithRS) => (s.version ?? 0) >= 25500;
-      const newTop = songs.filter(isNew).sort((a, b) => b._rs - a._rs).slice(0, 15);
-      const oldTop = songs.filter((s) => !isNew(s)).sort((a, b) => b._rs - a._rs).slice(0, 35);
+      const newTop = songs
+        .filter(isNew)
+        .sort((a, b) => b._rs - a._rs)
+        .slice(0, 15);
+      const oldTop = songs
+        .filter((s) => !isNew(s))
+        .sort((a, b) => b._rs - a._rs)
+        .slice(0, 35);
       return (
         newTop.reduce((s, r) => s + r._rs, 0) +
         oldTop.reduce((s, r) => s + r._rs, 0)
@@ -49,8 +55,14 @@ export const GAMES: Record<GameId, GameConfig> = {
     formatTotal: (v) => v.toFixed(2),
     calcTotal: (songs) => {
       const isNew = (s: SongWithRS) => (s.version ?? 0) >= 26000;
-      const newTop = songs.filter(isNew).sort((a, b) => b._rs - a._rs).slice(0, 20);
-      const oldTop = songs.filter((s) => !isNew(s)).sort((a, b) => b._rs - a._rs).slice(0, 30);
+      const newTop = songs
+        .filter(isNew)
+        .sort((a, b) => b._rs - a._rs)
+        .slice(0, 20);
+      const oldTop = songs
+        .filter((s) => !isNew(s))
+        .sort((a, b) => b._rs - a._rs)
+        .slice(0, 30);
       const sum = [...newTop, ...oldTop].reduce((s, r) => s + r._rs, 0);
       return Math.floor((sum / 50) * 100) / 100;
     },
@@ -60,7 +72,7 @@ export const GAMES: Record<GameId, GameConfig> = {
     label: "SOUND VOLTEX",
     accent: "#38bdf8",
     ratingLabel: "VOLFORCE",
-    rsLabel: "VF",
+    rsLabel: "VOLFORCE",
     calcRS: sdvxRS,
     // 밀리-VF → VF (/ 1000)
     formatRS: (v) => (v / 1000).toFixed(3),
@@ -77,7 +89,7 @@ export const GAMES: Record<GameId, GameConfig> = {
     label: "Arcaea",
     accent: "#a855f7",
     ratingLabel: "POTENTIAL",
-    rsLabel: "PTT",
+    rsLabel: "POTENTIAL",
     calcRS: arcaeaRS,
     formatRS: (v) => v.toFixed(2),
     formatTotal: (v) => v.toFixed(2),
