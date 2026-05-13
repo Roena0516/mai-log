@@ -21,8 +21,8 @@ export default function AliasManager({ initialAliases, songTitles }: Props) {
   const [newAlias, setNewAlias] = useState("");
   const [error, setError] = useState("");
 
-  const filteredSongs = songSearch
-    ? songTitles.filter((t) => t.toLowerCase().includes(songSearch.toLowerCase()))
+  const filteredSongs = songSearch.trim()
+    ? songTitles.filter((t) => t.toLowerCase().includes(songSearch.trim().toLowerCase()))
     : songTitles;
 
   const selectedAliases = selected ? aliases.filter((a) => a.title === selected) : [];

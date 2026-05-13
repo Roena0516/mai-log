@@ -16,11 +16,11 @@ export async function GET() {
 export async function POST(req: Request) {
   if (!(await checkAdmin())) return NextResponse.json({ ok: false }, { status: 403 });
   const { title, alias } = await req.json();
-  if (!title?.trim() || !alias?.trim())
+  if (!title || title.length === 0 || !alias?.trim())
     return NextResponse.json({ ok: false, error: "필드를 모두 입력하세요" }, { status: 400 });
   try {
     const created = await prisma.songAlias.create({
-      data: { title: title.trim(), alias: alias.trim() },
+      data: { title, alias: alias.trim() },
     });
     return NextResponse.json({ ok: true, alias: created });
   } catch {
