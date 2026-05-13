@@ -103,10 +103,10 @@ export default function LogPage() {
 
   // filters
   if (filter.search.trim()) {
-    const q = filter.search.trim().toLowerCase();
+    const q = filter.search.toLowerCase().replace(/\s+/g, "");
     filtered = filtered.filter((s) => {
-      if (s.name.toLowerCase().includes(q)) return true;
-      return (aliasMap.get(s.name) ?? []).some((a) => a.toLowerCase().includes(q));
+      if (s.name.toLowerCase().replace(/\s+/g, "").includes(q)) return true;
+      return (aliasMap.get(s.name) ?? []).some((a) => a.toLowerCase().replace(/\s+/g, "").includes(q));
     });
   }
   if (filter.lvMin) filtered = filtered.filter((s) => s._displayLv >= parseFloat(filter.lvMin));
