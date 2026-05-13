@@ -102,8 +102,8 @@ export default function LogPage() {
   else filtered.sort((a, b) => b._displayLv - a._displayLv);
 
   // filters
-  if (filter.search) {
-    const q = filter.search.toLowerCase();
+  if (filter.search.trim()) {
+    const q = filter.search.trim().toLowerCase();
     filtered = filtered.filter((s) => {
       if (s.name.toLowerCase().includes(q)) return true;
       return (aliasMap.get(s.name) ?? []).some((a) => a.toLowerCase().includes(q));
