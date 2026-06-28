@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { T } from "../../lib/tokens";
 
 interface Alias {
@@ -9,21 +9,66 @@ interface Alias {
   alias: string;
 }
 
-interface Props {
-  initialAliases: Alias[];
-  songTitles: string[];
+interface SongItem {
+  title: string;
+  version: number;
+  versionName: string;
+  isNew: boolean;
 }
 
-export default function AliasManager({ initialAliases, songTitles }: Props) {
+type SortKey = "title" | "aliasCount" | "version";
+
+const SORT_OPTIONS: { key: SortKey; label: string }[] = [
+  { key: "title", label: "이름순" },
+  { key: "aliasCount", label: "별명 많은순" },
+  { key: "version", label: "최신 버전순" },
+];
+
+interface Props {
+  initialAliases: Alias[];
+  songs: SongItem[];
+}
+
+export default function AliasManager({ initialAliases, songs }: Props) {
   const [aliases, setAliases] = useState<Alias[]>(initialAliases);
   const [selected, setSelected] = useState<string | null>(null);
   const [songSearch, setSongSearch] = useState("");
   const [newAlias, setNewAlias] = useState("");
   const [error, setError] = useState("");
+  const [newOnly, setNewOnly] = useState(false);
+  const [sortKey, setSortKey] = useState<SortKey>("title");
 
-  const filteredSongs = songSearch.trim()
-    ? songTitles.filter((t) => t.toLowerCase().includes(songSearch.trim().toLowerCase()))
-    : songTitles;
+  const newCount = useMemo(() => songs.filter((s) => s.isNew).length, [songs]);
+
+  // title -> 별명 갯수
+  const aliasCountMap = useMemo(() => {
+    const m = new Map<string, number>();
+    for (const a of aliases) m.set(a.title, (m.get(a.title) ?? 0) + 1);
+    return m;
+  }, [aliases]);
+
+  const filteredSongs = useMemo(() => {
+    let list = songs;
+    if (newOnly) list = list.filter((s) => s.isNew);
+    const q = songSearch.trim().toLowerCase();
+    if (q) list = list.filter((s) => s.title.toLowerCase().includes(q));
+
+    const sorted = [...list];
+    if (sortKey === "aliasCount") {
+      sorted.sort((a, b) => {
+        const diff = (aliasCountMap.get(b.title) ?? 0) - (aliasCountMap.get(a.title) ?? 0);
+        return diff !== 0 ? diff : a.title.localeCompare(b.title);
+      });
+    } else if (sortKey === "version") {
+      sorted.sort((a, b) => {
+        const diff = b.version - a.version;
+        return diff !== 0 ? diff : a.title.localeCompare(b.title);
+      });
+    } else {
+      sorted.sort((a, b) => a.title.localeCompare(b.title));
+    }
+    return sorted;
+  }, [songs, newOnly, songSearch, sortKey, aliasCountMap]);
 
   const selectedAliases = selected ? aliases.filter((a) => a.title === selected) : [];
 
@@ -72,13 +117,52 @@ export default function AliasManager({ initialAliases, songTitles }: Props) {
       <div style={{ display: "flex", gap: 1, background: T.line, height: 600 }}>
         {/* 곡 목록 */}
         <div style={{ width: 320, flexShrink: 0, background: T.surface, display: "flex", flexDirection: "column" }}>
-          <div style={{ padding: "10px 12px", borderBottom: `1px solid ${T.line}` }}>
+          <div style={{ padding: "10px 12px", borderBottom: `1px solid ${T.line}`, display: "flex", flexDirection: "column", gap: 8 }}>
             <input
               value={songSearch}
               onChange={(e) => setSongSearch(e.target.value)}
               placeholder="곡 검색"
               style={inputStyle}
             />
+            <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+              <button
+                onClick={() => setNewOnly((v) => !v)}
+                style={{
+                  padding: "5px 10px",
+                  background: newOnly ? T.text : "none",
+                  border: `1px solid ${newOnly ? T.text : T.line}`,
+                  color: newOnly ? "#fff" : T.muted,
+                  fontFamily: "inherit",
+                  fontSize: 11,
+                  fontWeight: 700,
+                  cursor: "pointer",
+                }}
+              >
+                신곡만 보기 ({newCount})
+              </button>
+              <select
+                value={sortKey}
+                onChange={(e) => setSortKey(e.target.value as SortKey)}
+                style={{
+                  padding: "5px 8px",
+                  background: T.surface,
+                  border: `1px solid ${T.line}`,
+                  color: T.text,
+                  fontFamily: "inherit",
+                  fontSize: 11,
+                  fontWeight: 700,
+                  cursor: "pointer",
+                  outline: "none",
+                  marginLeft: "auto",
+                }}
+              >
+                {SORT_OPTIONS.map((o) => (
+                  <option key={o.key} value={o.key}>
+                    {o.label}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
           <div style={{ overflowY: "auto", flex: 1 }}>
             {filteredSongs.length === 0 ? (
@@ -86,13 +170,13 @@ export default function AliasManager({ initialAliases, songTitles }: Props) {
                 검색 결과 없음
               </div>
             ) : (
-              filteredSongs.map((title) => {
-                const aliasCount = aliases.filter((a) => a.title === title).length;
-                const isSelected = selected === title;
+              filteredSongs.map((s) => {
+                const aliasCount = aliasCountMap.get(s.title) ?? 0;
+                const isSelected = selected === s.title;
                 return (
                   <div
-                    key={title}
-                    onClick={() => { setSelected(title); setNewAlias(""); setError(""); }}
+                    key={s.title}
+                    onClick={() => { setSelected(s.title); setNewAlias(""); setError(""); }}
                     style={{
                       padding: "9px 12px",
                       borderBottom: `1px solid ${T.line}`,
@@ -101,14 +185,24 @@ export default function AliasManager({ initialAliases, songTitles }: Props) {
                       borderLeft: isSelected ? `2px solid ${T.text}` : "2px solid transparent",
                     }}
                   >
-                    <div style={{ fontSize: 12, color: T.text, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                      {title}
+                    <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                      {s.isNew && (
+                        <span style={{ fontSize: 9, fontWeight: 800, color: "#fff", background: "#e53e3e", padding: "1px 4px", borderRadius: 2, flexShrink: 0 }}>
+                          NEW
+                        </span>
+                      )}
+                      <span style={{ fontSize: 12, color: T.text, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                        {s.title}
+                      </span>
                     </div>
-                    {aliasCount > 0 && (
-                      <div style={{ fontSize: 10, color: T.muted, marginTop: 2 }}>
-                        별명 {aliasCount}개
-                      </div>
-                    )}
+                    <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 2 }}>
+                      {sortKey === "version" && (
+                        <span style={{ fontSize: 10, color: T.muted }}>{s.versionName}</span>
+                      )}
+                      {aliasCount > 0 && (
+                        <span style={{ fontSize: 10, color: T.muted }}>별명 {aliasCount}개</span>
+                      )}
+                    </div>
                   </div>
                 );
               })
